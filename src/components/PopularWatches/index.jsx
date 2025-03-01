@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 const PopularWatches = ({ watches, title }) => {
   const [favorites, setFavorites] = useState({});
 
-  const toggleFavorite = (id) => {
+  const toggleFavorite = (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
     setFavorites((prev) => ({
       ...prev,
       [id]: !prev[id],
@@ -33,7 +35,7 @@ const PopularWatches = ({ watches, title }) => {
                   className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
                     favorites[watch.id] ? "text-red-500" : "text-gray-500"
                   } hover:text-red-500`}
-                  onClick={() => toggleFavorite(watch.id)}
+                  onClick={(e) => toggleFavorite(e, watch.id)}
                 >
                   {favorites[watch.id] ? <HeartFilled /> : <HeartOutlined />}
                 </button>

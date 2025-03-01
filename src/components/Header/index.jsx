@@ -26,7 +26,7 @@ const Header = () => {
                 placeholder="Tìm sản phẩm hoặc thương hiệu"
                 className="w-full border-none rounded-xl px-10 py-2 text-black text-sm focus:outline-none focus:border-black-400 bg-[#E7E7E8]"
               />
-              <span className="absolute left-2 top-2">
+              <span className="absolute left-2 top-2 cursor-pointer">
                 <img width="20px" src={searchIcon} alt="Search Icon" />
               </span>
             </div>
@@ -34,17 +34,17 @@ const Header = () => {
             <div className="flex space-x-7 text-gray-600 text-lg mr-[100px]">
               <button
                 onClick={() => navigate("/cart")}
-                className="hover:text-red-500 cursor-pointer"
+                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
                 <img width="26px" src={cartIcon} alt="Cart Icon" />
               </button>
               <button
                 onClick={() => navigate("/favorite")}
-                className="hover:text-red-500 cursor-pointer"
+                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
                 <img width="26px" src={heartIcon} alt="Heart Icon" />
               </button>
-              <button className="hover:text-red-500 cursor-pointer">
+              <button className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80">
                 <img width="26px" src={userIcon} alt="User Icon" />
               </button>
             </div>
