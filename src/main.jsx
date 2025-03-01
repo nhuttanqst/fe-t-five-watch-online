@@ -9,6 +9,7 @@ import CouplePage from "./pages/client/Couple";
 import ContactPage from "./pages/client/Contact";
 import CartPage from "./pages/client/Cart";
 import FavoritePage from "./pages/client/Favorite";
+import ProductDetailPage from "./pages/client/ProductDetail";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/contact",
         element: <ContactPage />,
+      },
+      {
+        path: "/product/:id",
+        element: <ProductDetailPage />,
       },
       {
         path: "/cart",
