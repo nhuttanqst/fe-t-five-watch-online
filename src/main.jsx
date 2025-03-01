@@ -4,9 +4,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/Layout";
 import HomePage from "./pages/client/Home";
 import MenPage from "./pages/client/Men";
-import WomanPage from "./pages/client/Woman";
+import WomenPage from "./pages/client/Women";
 import CouplePage from "./pages/client/Couple";
 import ContactPage from "./pages/client/Contact";
+import CartPage from "./pages/client/Cart";
+import FavoritePage from "./pages/client/Favorite";
 
 const router = createBrowserRouter([
   {
@@ -22,8 +24,8 @@ const router = createBrowserRouter([
         element: <MenPage />,
       },
       {
-        path: "/woman",
-        element: <WomanPage />,
+        path: "/women",
+        element: <WomenPage />,
       },
       {
         path: "/couple",
@@ -32,6 +34,14 @@ const router = createBrowserRouter([
       {
         path: "/contact",
         element: <ContactPage />,
+      },
+      {
+        path: "/cart",
+        element: <CartPage />,
+      },
+      {
+        path: "/favorite",
+        element: <FavoritePage />,
       },
       {
         path: "/login",

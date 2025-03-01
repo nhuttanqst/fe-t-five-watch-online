@@ -3,14 +3,19 @@ import searchIcon from "../../assets/search.png";
 import cartIcon from "../../assets/cart.png";
 import heartIcon from "../../assets/heart.png";
 import userIcon from "../../assets/user.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <header className="w-full border-b-[#EDEDED] shadow-sm bg-white">
       <div className="container mx-auto flex flex-col items-center pt-4 pb-1 px-6">
         <div className="w-full flex items-center justify-between py-6">
-          <div className="absolute left-1/2 transform -translate-x-1/2">
+          <div
+            onClick={() => navigate("/")}
+            className="absolute left-1/2 transform -translate-x-1/2 cursor-pointer"
+          >
             <img src={logo} alt="T-Five Watch" className="h-35" />
           </div>
 
@@ -27,10 +32,16 @@ const Header = () => {
             </div>
 
             <div className="flex space-x-7 text-gray-600 text-lg mr-[100px]">
-              <button className="hover:text-red-500 cursor-pointer">
+              <button
+                onClick={() => navigate("/cart")}
+                className="hover:text-red-500 cursor-pointer"
+              >
                 <img width="26px" src={cartIcon} alt="Cart Icon" />
               </button>
-              <button className="hover:text-red-500 cursor-pointer">
+              <button
+                onClick={() => navigate("/favorite")}
+                className="hover:text-red-500 cursor-pointer"
+              >
                 <img width="26px" src={heartIcon} alt="Heart Icon" />
               </button>
               <button className="hover:text-red-500 cursor-pointer">
@@ -45,48 +56,52 @@ const Header = () => {
             to="/"
             className={({ isActive }) =>
               isActive
-                ? "text-red-500 border-b-2 border-red-500 pb-1"
-                : "hover:text-red-500"
+                ? "text-red-500 border-b-2 border-red-500 pb-1 transition-colors duration-300"
+                : "hover:text-red-500 transition-colors duration-300"
             }
           >
             TRANG CHỦ
           </NavLink>
+
           <NavLink
             to="/men"
             className={({ isActive }) =>
               isActive
-                ? "text-red-500 border-b-2 border-red-500 pb-1"
-                : "hover:text-red-500"
+                ? "text-red-500 border-b-2 border-red-500 pb-1 transition-colors duration-300"
+                : "hover:text-red-500 transition-colors duration-300"
             }
           >
             NAM
           </NavLink>
+
           <NavLink
-            to="/woman"
+            to="/women"
             className={({ isActive }) =>
               isActive
-                ? "text-red-500 border-b-2 border-red-500 pb-1"
-                : "hover:text-red-500"
+                ? "text-red-500 border-b-2 border-red-500 pb-1 transition-colors duration-300"
+                : "hover:text-red-500 transition-colors duration-300"
             }
           >
             NỮ
           </NavLink>
+
           <NavLink
             to="/couple"
             className={({ isActive }) =>
               isActive
-                ? "text-red-500 border-b-2 border-red-500 pb-1"
-                : "hover:text-red-500"
+                ? "text-red-500 border-b-2 border-red-500 pb-1 transition-colors duration-300"
+                : "hover:text-red-500 transition-colors duration-300"
             }
           >
             CẶP ĐÔI
           </NavLink>
+
           <NavLink
             to="/contact"
             className={({ isActive }) =>
               isActive
-                ? "text-red-500 border-b-2 border-red-500 pb-1"
-                : "hover:text-red-500"
+                ? "text-red-500 border-b-2 border-red-500 pb-1 transition-colors duration-300"
+                : "hover:text-red-500 transition-colors duration-300"
             }
           >
             LIÊN HỆ

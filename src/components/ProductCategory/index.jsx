@@ -32,7 +32,10 @@ const ProductCategories = () => {
       <div className="grid grid-cols-6">
         {categories.map((item, index) => (
           <div key={index} className="flex flex-col items-center mt-4">
-            <div className="bg-gray-100 p-4 rounded-lg shadow-sm flex items-center justify-center w-24 h-24 cursor-pointer">
+            <div
+              className="bg-gray-100 p-4 rounded-lg shadow-sm flex items-center justify-center w-24 h-24 cursor-pointer mt-1 
+                     transition-all duration-300 hover:scale-105 hover:shadow-md"
+            >
               <img src={item.icon} alt={item.title} className="w-20 h-20" />
             </div>
 

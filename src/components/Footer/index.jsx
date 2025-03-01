@@ -65,8 +65,8 @@ const Footer = () => {
               <a href="#">Vận chuyển và giao nhận</a>
             </li>
           </ul>
-          <h3 className="text-lg font-bold mt-14">THAM KHẢO</h3>
-          <ul className="mt-2 space-y-4 text-sm">
+          <h3 className="text-lg font-bold mt-10">THAM KHẢO</h3>
+          <ul className="mt-6 space-y-4 text-sm">
             <li>
               <a href="#">Điều khoản sử dụng</a>
             </li>
