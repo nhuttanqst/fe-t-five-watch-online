@@ -28,7 +28,7 @@ const categories = [
 
 const ProductCategories = () => {
   return (
-    <div className="container mx-auto py-8 px-35">
+    <div className="container mx-auto pt-6 pb-8 px-35">
       <div className="grid grid-cols-6">
         {categories.map((item, index) => (
           <div key={index} className="flex flex-col items-center mt-4">

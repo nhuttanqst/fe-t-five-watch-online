@@ -1,6 +1,8 @@
 import Banner from "../../components/Banner";
 import FeaturedCategory from "../../components/FeaturedCategory";
+import PopularWatches from "../../components/PopularWatches";
 import ProductCategories from "../../components/ProductCategory";
+import { watchesMen } from "../../data";
 
 const HomePage = () => {
   return (
@@ -9,6 +11,7 @@ const HomePage = () => {
         <Banner />
         <ProductCategories />
         <FeaturedCategory />
+        <PopularWatches watches={watchesMen} title="ĐỒNG HỒ NAM BÁN CHẠY" />
       </div>
     </>
   );
