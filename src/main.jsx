@@ -10,6 +10,7 @@ import ContactPage from "./pages/client/Contact";
 import CartPage from "./pages/client/Cart";
 import FavoritePage from "./pages/client/Favorite";
 import ProductDetailPage from "./pages/client/ProductDetail";
+import { AppProvider } from "./context/app.context";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +67,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AppProvider>
+      <RouterProvider router={router} />
+    </AppProvider>
   </StrictMode>
 );
