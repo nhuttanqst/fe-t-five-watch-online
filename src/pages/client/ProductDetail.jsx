@@ -82,6 +82,10 @@ const ProductDetailPage = () => {
     }
   }, [dataViewDetail]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
       <div className="container mt-4 mb-20 px-12 mx-auto">
