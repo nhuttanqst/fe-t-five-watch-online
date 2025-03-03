@@ -9,7 +9,7 @@ const CouplePage = () => {
     <img 
     src={banner} 
     alt="Banner" 
-    className="mx-auto my-4 rounded-2xl transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg "
+    className="mx-auto my-4 rounded-2xl transition-transform duration-300 ease-in-out transform hover:scale-105 hover:rotate-3 hover:shadow-lg"
   />
   <p className="flex justify-center [color:#9E9E9E] text-2xl">
   Đồng hồ đôi đẹp là sự “chắp cánh” tốt nhất cho tình yêu của hai bạn để bước thêm một nấc thang mới. Bạn sẽ thấy sức mạnh diệu kì đến từ món quà tặng tuyệt vời này, nó không chỉ nằm ở giá trị vật chất mà đồng hồ cặp (đôi) chính hãng còn mang những giá trị tinh thần hết sức ý nghĩa mà sẽ làm tình yêu đôi lứa bùng cháy và lưu giữ được những khoảng khắc thời gian lãng mạn trong tình yêu của hai bạn…

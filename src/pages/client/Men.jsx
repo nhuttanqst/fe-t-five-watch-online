@@ -11,7 +11,7 @@ const MenPage = () => {
         <img 
   src={banner} 
   alt="Banner" 
-  className="mx-auto my-4 rounded-2xl transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
+ className="mx-auto my-4 rounded-2xl transition-transform duration-300 ease-in-out transform hover:scale-105 hover:rotate-3 hover:shadow-lg"
 />
 
         <p className="flex justify-center [color:#9E9E9E] text-2xl">
