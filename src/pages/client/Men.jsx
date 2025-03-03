@@ -8,11 +8,12 @@ const MenPage = () => {
       <div className="container mt-4 mb-20 mx-auto ">
         <p className="flex justify-center [color:#6B6B6B] text-3xl font-bold">Đồng hồ nam đẹp chính hãng,cao cấp,mẫu mới 2025,góp 0%</p>
         {/* <Banner /> */}
-          <img 
-          src={banner} 
-          alt="Banner" 
-          className="mx-auto my-4   rounded-2xl "
-        />
+        <img 
+  src={banner} 
+  alt="Banner" 
+  className="mx-auto my-4 rounded-2xl transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
+/>
+
         <p className="flex justify-center [color:#9E9E9E] text-2xl">
           Những mẫu đồng hồ nam đẹp luôn là món phụ kiện thời trang hoàn hảo cho
           tất cả các dịp, giúp nam giới tự tin hơn – khẳng định phong cách.
@@ -27,7 +28,7 @@ const MenPage = () => {
 
             {/* Khung bộ lọc */}
             <div className="relative">
-              <div className="absolute top-0 right-0 flex items-center bg-white shadow-md rounded-lg px-4 py-2 border-2 border-gray-300">
+              <div className="absolute top-0 right-0 flex items-center bg-white shadow-md rounded-lg px-4 py-2 border-2 border-gray-300 hover:">
                 <img
                   src={icon}
                   alt="Bộ lọc"

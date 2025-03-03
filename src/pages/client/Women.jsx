@@ -10,7 +10,7 @@ const WomenPage = () => {
   <img 
   src={banner} 
   alt="Banner" 
-  className="mx-auto my-4   rounded-2xl "
+  className="mx-auto my-4 rounded-2xl transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg "
 />
 
 
