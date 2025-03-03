@@ -21,7 +21,7 @@ const WomenPage = () => {
 
       {/* Khung bộ lọc */}
       <div className="relative">
-        <div className="absolute top-0 right-0 flex items-center bg-white shadow-md rounded-lg px-4 py-2 border-2">
+        <div className="absolute top-0 right-0 flex items-center bg-white shadow-md rounded-lg px-4 py-2 border-2 border-gray-300">
           <img
             src={icon}
             alt="Bộ lọc"
