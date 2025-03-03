@@ -54,11 +54,11 @@ const CartPage = () => {
                   <span className="font-semibold text-2xl">{item.name}</span>
                   <div className="flex items-center gap-4 mt-6">
                     <div className="flex items-center space-x-4">
-                      <button className="flex items-center justify-center text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105">
+                      <button className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105">
                         -
                       </button>
                       <span className="text-xl">{item.quantity}</span>
-                      <button className="flex items-center justify-center text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105">
+                      <button className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105">
                         +
                       </button>
                     </div>
