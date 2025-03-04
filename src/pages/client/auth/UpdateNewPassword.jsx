@@ -1,7 +1,7 @@
 import { Button, Divider, Form, Input } from "antd";
 import "./UpdateNewPassword.css";
 
-const UpdateNewPassword = () => {
+const UpdateNewPasswordPage = () => {
   const [form] = Form.useForm();
 
   return (
@@ -55,4 +55,4 @@ const UpdateNewPassword = () => {
   );
 };
 
-export default UpdateNewPassword;
+export default UpdateNewPasswordPage;
