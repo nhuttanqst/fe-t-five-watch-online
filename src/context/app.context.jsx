@@ -10,6 +10,21 @@ export const AppProvider = ({ children }) => {
   const [favorite, setFavorite] = useState([]);
   const [dataViewDetail, setDataViewDetail] = useState({});
 
+  const toggleFavorite = (product) => {
+    setFavorite((prev) => {
+      const isFavorite = prev.some((item) => item.id === product.id);
+      if (isFavorite) {
+        return prev.filter((item) => item.id !== product.id);
+      } else {
+        return [...prev, product];
+      }
+    });
+  };
+
+  const removeFromFavorite = (productId) => {
+    setFavorite((prev) => prev.filter((item) => item.id !== productId));
+  };
+
   return (
     <>
       {isAppLoading === false ? (
@@ -23,6 +38,8 @@ export const AppProvider = ({ children }) => {
             setDataViewDetail,
             favorite,
             setFavorite,
+            toggleFavorite,
+            removeFromFavorite,
           }}
         >
           {children}
