@@ -37,6 +37,7 @@ const watchesMen = [
     name: "Casio World Time AE-1200WHD...",
     price: "1.506.000 ₫",
     image: product1,
+    thuongHieu: "Casio",
     type: "men",
     slider: [
       product1,
@@ -53,6 +54,7 @@ const watchesMen = [
     name: "Tissot Le Locle Powermatic...",
     price: "17.500.000 ₫",
     image: product2,
+    thuongHieu: "Tissot",
     type: "men",
     slider: [
       product2,
@@ -69,6 +71,7 @@ const watchesMen = [
     name: "Doxa Noble D173TCM...",
     price: "49.240.000 ₫",
     image: product3,
+    thuongHieu: "Doxa",
     type: "men",
     slider: [
       product3,
@@ -85,6 +88,7 @@ const watchesMen = [
     name: "Titoni Airmaster 83743 S-682...",
     price: "35.350.000 ₫",
     image: product4,
+    thuongHieu: "Titoni",
     type: "men",
     slider: [
       product4,
@@ -101,6 +105,7 @@ const watchesMen = [
     name: "Tissot PRX Powermatic...",
     price: "21.000.000 ₫",
     image: product5,
+    thuongHieu: "Tissot",
     type: "men",
     slider: [
       product5,
@@ -117,6 +122,7 @@ const watchesMen = [
     name: "KOI Noble K002.403.641...",
     price: "5.990.000 ₫",
     image: product6,
+    thuongHieu: "KOI",
     type: "men",
     slider: [
       product6,
@@ -133,6 +139,7 @@ const watchesMen = [
     name: "Koi K0000 1.234.403.0...",
     price: "2.130.000 ₫",
     image: product7,
+    thuongHieu: "KOI",
     type: "men",
     slider: [
       product7,
@@ -149,6 +156,7 @@ const watchesMen = [
     name: "Citizen Tsuyosa NJ0153-82X – N...",
     price: "13.985.000 ₫",
     image: product8,
+    thuongHieu: "Citizen",
     type: "men",
     slider: [
       product8,
@@ -168,6 +176,7 @@ const watchesWomen = [
     name: "Daniel Wellington Quadro DW00...",
     price: "4.940.000 ₫",
     image: product9,
+    thuongHieu: "Daniel Wellington",
     type: "women",
     slider: [
       product9,
@@ -184,6 +193,7 @@ const watchesWomen = [
     name: "Saga Stella 53555-SVMWSV-2...",
     price: "6.380.000 ₫",
     image: product10,
+    thuongHieu: "Saga",
     type: "women",
     slider: [
       product10,
@@ -200,6 +210,7 @@ const watchesWomen = [
     name: "Saga Long Xing Da Da 53111-SVG...",
     price: "8.180.000 ₫",
     image: product11,
+    thuongHieu: "Saga",
     type: "women",
     slider: [
       product11,
@@ -216,6 +227,7 @@ const watchesWomen = [
     name: "Tissot Lovely Square T058.109.33...",
     price: "12.080.000 ₫",
     image: product12,
+    thuongHieu: "Tissot",
     type: "women",
     slider: [
       product12,
@@ -232,6 +244,7 @@ const watchesWomen = [
     name: "Titoni Cosmo Queen 729 G-DB-541...",
     price: "40.060.000 ₫",
     image: product13,
+    thuongHieu: "Titoni",
     type: "women",
     slider: [
       product13,
@@ -248,6 +261,7 @@ const watchesWomen = [
     name: "Saga Stella 71836-SVWHBL-2...",
     price: "4.050.000 ₫",
     image: product14,
+    thuongHieu: "Saga",
     type: "women",
     slider: [
       product14,
@@ -264,6 +278,7 @@ const watchesWomen = [
     name: "Saga 53767-SVLGLG-2...",
     price: "7.310.000 ₫",
     image: product15,
+    thuongHieu: "Saga",
     type: "women",
     slider: [
       product15,
@@ -280,6 +295,7 @@ const watchesWomen = [
     name: "Koi K001.103.642.0.5.01.01...",
     price: "2.060.000 ₫",
     image: product16,
+    thuongHieu: "KOI",
     type: "women",
     slider: [
       product16,
@@ -299,6 +315,7 @@ const watchesCouple = [
     name: "Koi Đôi (K005.354.092...",
     price: "4.940.000 ₫",
     image: product17,
+    thuongHieu: "KOI",
     type: "couple",
     slider: [
       product17,
@@ -315,6 +332,7 @@ const watchesCouple = [
     name: "Koi Đôi (K005.354.0.92.03.01...",
     price: "8.640.000 ₫",
     image: product18,
+    thuongHieu: "KOI",
     type: "couple",
     slider: [
       product18,
@@ -331,6 +349,7 @@ const watchesCouple = [
     name: "Koi Đôi (K005.336.0.92.05.01.03...",
     price: "6.500.000 ₫",
     image: product19,
+    thuongHieu: "KOI",
     type: "couple",
     slider: [
       product19,
@@ -347,6 +366,7 @@ const watchesCouple = [
     name: "Koi Đôi (K005.303.092...",
     price: "5.800.000 ₫",
     image: product20,
+    thuongHieu: "KOI",
     type: "couple",
     slider: [
       product20,
@@ -363,6 +383,7 @@ const watchesCouple = [
     name: "Koi Đôi (K005.303.091...",
     price: "9.160.000 ₫",
     image: product21,
+    thuongHieu: "KOI",
     type: "couple",
     slider: [
       product21,
@@ -379,6 +400,7 @@ const watchesCouple = [
     name: "Titoni Đôi – Kính Sapphire...",
     price: "80.460.000 ₫",
     image: product22,
+    thuongHieu: "Titoni",
     type: "couple",
     slider: [
       product22,
@@ -395,6 +417,7 @@ const watchesCouple = [
     name: "Titoni Đôi – Kính Sapphire...",
     price: "80.290.000 ₫",
     image: product23,
+    thuongHieu: "Titoni",
     type: "couple",
     slider: [
       product23,
@@ -411,6 +434,7 @@ const watchesCouple = [
     name: "Titoni Đôi – Kính Sapphire...",
     price: "74.740.000 ₫",
     image: product24,
+    thuongHieu: "Titoni",
     type: "couple",
     slider: [
       product24,
