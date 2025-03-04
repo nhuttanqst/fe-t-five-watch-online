@@ -1,55 +1,62 @@
-import { useState } from "react";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useCurrentApp } from "../../context/app.context";
 
-const PopularWatches = ({ watches, title }) => {
-  const [favorites, setFavorites] = useState({});
+const PopularWatches = ({ watches, title, mx, px }) => {
+  const { setDataViewDetail, favorite, toggleFavorite } = useCurrentApp();
+  const navigate = useNavigate();
 
-  const toggleFavorite = (e, id) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setFavorites((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+  const handleViewDetail = (watch) => {
+    setDataViewDetail(watch);
+    navigate(`/product/${watch.id}`);
+  };
+
+  const isFavorite = (id) => {
+    return favorite.some((item) => item.id === id);
   };
 
   return (
-    <div className="container mx-auto py-8 px-6">
+    <div className={`container mx-auto py-8 ${px ? "" : "px-6"}`}>
       <h2 className="text-center text-xl font-bold uppercase text-gray-800 mb-6">
         {title}
       </h2>
 
-      <div className="grid grid-cols-4 gap-6 mx-20">
+      <div className={`grid grid-cols-4 gap-6 ${mx ? "mx-0" : "mx-20"}`}>
         {watches.map((watch) => (
-          <Link to={`/product/${watch.id}`} key={watch.id}>
-            <div className="group mt- flex flex-col items-center text-center cursor-pointer transition-all duration-300 hover:scale-105">
-              <div className="relative w-48 h-48 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
-                <img
-                  src={watch.image}
-                  alt={watch.name}
-                  className="object-cover w-full h-full"
-                />
+          <div
+            key={watch.id}
+            className="group mt- flex flex-col items-center text-center cursor-pointer transition-all duration-300 hover:scale-105"
+            onClick={() => handleViewDetail(watch)}
+          >
+            <div className="relative w-48 h-48 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+              <img
+                src={watch.image}
+                alt={watch.name}
+                className="object-cover w-full h-full"
+              />
 
-                <button
-                  className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
-                    favorites[watch.id] ? "text-red-500" : "text-gray-500"
-                  } hover:text-red-500`}
-                  onClick={(e) => toggleFavorite(e, watch.id)}
-                >
-                  {favorites[watch.id] ? <HeartFilled /> : <HeartOutlined />}
-                </button>
-              </div>
-
-              <p className="text-gray-700 text-sm mt-2 w-40 truncate transition-all duration-300 group-hover:scale-105">
-                {watch.name}
-              </p>
-
-              <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
-                {watch.price}
-              </p>
+              <button
+                className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
+                  isFavorite(watch.id) ? "text-red-500" : "text-gray-500"
+                } hover:text-red-500`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFavorite(watch);
+                }}
+              >
+                {isFavorite(watch.id) ? <HeartFilled /> : <HeartOutlined />}
+              </button>
             </div>
-          </Link>
+
+            <p className="text-gray-700 text-sm mt-2 w-40 truncate transition-all duration-300 group-hover:scale-105">
+              {watch.name}
+            </p>
+
+            <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
+              {watch.price}
+            </p>
+          </div>
         ))}
       </div>
     </div>

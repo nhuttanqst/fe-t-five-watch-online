@@ -4,8 +4,11 @@ import searchIcon from "../../assets/search.png";
 import cartIcon from "../../assets/cart.png";
 import heartIcon from "../../assets/heart.png";
 import userIcon from "../../assets/user.png";
+import { Badge } from "antd";
+import { useCurrentApp } from "../../context/app.context";
 
 const Header = () => {
+  const { favorite } = useCurrentApp();
   const navigate = useNavigate();
   const brands = [
     { id: 1, name: "Rolex", category: "men" },
@@ -21,7 +24,7 @@ const Header = () => {
 
   
   return (
-    <header className="w-full border-b-[#EDEDED] shadow-sm bg-white">
+    <header className="w-full border-b-2 border-b-[#EDEDED] shadow-sm bg-white">
       <div className="container mx-auto flex flex-col items-center pt-4 pb-1 px-6">
         <div className="w-full flex items-center justify-between py-6">
           <div
@@ -48,15 +51,22 @@ const Header = () => {
                 onClick={() => navigate("/cart")}
                 className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
-                <img width="26px" src={cartIcon} alt="Cart Icon" />
+                <Badge count={0} size={"small"} showZero>
+                  <img width="26px" src={cartIcon} alt="Cart Icon" />
+                </Badge>
               </button>
               <button
                 onClick={() => navigate("/favorite")}
                 className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
-                <img width="26px" src={heartIcon} alt="Heart Icon" />
+                <Badge count={favorite.length ?? 0} size={"small"} showZero>
+                  <img width="26px" src={heartIcon} alt="Heart Icon" />
+                </Badge>
               </button>
-              <button className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80">
+              <button
+                onClick={() => navigate("/login")}
+                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
+              >
                 <img width="26px" src={userIcon} alt="User Icon" />
               </button>
             </div>

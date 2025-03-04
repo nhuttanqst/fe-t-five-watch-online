@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "react-image-gallery/styles/css/image-gallery.css";
 
 @media (min-width: 767px) {
   ::-webkit-scrollbar {
