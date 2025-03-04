@@ -51,7 +51,10 @@ const Header = () => {
                   <img width="26px" src={heartIcon} alt="Heart Icon" />
                 </Badge>
               </button>
-              <button className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80">
+              <button
+                onClick={() => navigate("/login")}
+                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
+              >
                 <img width="26px" src={userIcon} alt="User Icon" />
               </button>
             </div>
