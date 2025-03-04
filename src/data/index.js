@@ -22,6 +22,13 @@ import product21 from "../assets/product21.png";
 import product22 from "../assets/product22.png";
 import product23 from "../assets/product23.png";
 import product24 from "../assets/product24.png";
+import icon1 from "../assets/icon1.png";
+import icon2 from "../assets/icon2.png";
+import icon3 from "../assets/icon3.png";
+import icon4 from "../assets/icon4.png";
+import icon5 from "../assets/icon5.png";
+import icon6 from "../assets/icon6.png";
+import icon7 from "../assets/icon7.png";
 import { v4 as uuidv4 } from "uuid";
 
 const watchesMen = [
@@ -417,4 +424,35 @@ const watchesCouple = [
   },
 ];
 
-export { watchesMen, watchesWomen, watchesCouple };
+const items = [
+  {
+    icon: icon1,
+    text: "Tăng thời gian bảo hành lên đến 5 năm",
+  },
+  {
+    icon: icon2,
+    text: "Hoàn tiền gấp 10 lần khi phát hiện hàng giả",
+  },
+  {
+    icon: icon3,
+    text: "Trung tâm bảo hành đạt tiêu chuẩn quốc tế",
+  },
+  {
+    icon: icon4,
+    text: "Thay pin miễn phí suốt đời",
+  },
+  {
+    icon: icon5,
+    text: "Giao hàng siêu tốc 2h, ship COD miễn phí",
+  },
+  {
+    icon: icon6,
+    text: "Kinh nghiệm và dịch vụ hơn 30 năm",
+  },
+  {
+    icon: icon7,
+    text: "Sai kích cỡ? Không ưng ý? Đổi hàng trong 7 ngày",
+  },
+];
+
+export { watchesMen, watchesWomen, watchesCouple, items };

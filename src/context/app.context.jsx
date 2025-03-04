@@ -7,6 +7,7 @@ const CurrentAppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [isAppLoading, setIsAppLoading] = useState(false);
   const [carts, setCarts] = useState([]);
+  const [favorite, setFavorite] = useState([]);
   const [dataViewDetail, setDataViewDetail] = useState({});
 
   return (
@@ -20,6 +21,8 @@ export const AppProvider = ({ children }) => {
             setCarts,
             dataViewDetail,
             setDataViewDetail,
+            favorite,
+            setFavorite,
           }}
         >
           {children}

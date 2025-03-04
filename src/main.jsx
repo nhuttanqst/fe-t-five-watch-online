@@ -10,6 +10,10 @@ import ContactPage from "./pages/client/Contact";
 import CartPage from "./pages/client/Cart";
 import FavoritePage from "./pages/client/Favorite";
 import ProductDetailPage from "./pages/client/ProductDetail";
+import ForgotPasswordPage from "./pages/client/auth/ForgotPassword";
+import UpdateNewPassword from "./pages/client/auth/UpdateNewPassword";
+import LoginPage from "./pages/client/auth/Login";
+import RegisterPage from "./pages/client/auth/Register";
 import { AppProvider } from "./context/app.context";
 
 const router = createBrowserRouter([
@@ -51,11 +55,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <div>Login Page</div>,
+        element: <LoginPage />,
       },
       {
         path: "/register",
-        element: <div>Register Page</div>,
+        element: <RegisterPage />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: "/update-new-password",
+        element: <UpdateNewPassword />,
       },
     ],
   },

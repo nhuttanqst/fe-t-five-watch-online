@@ -1,25 +1,18 @@
-import { useState } from "react";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useCurrentApp } from "../../context/app.context";
 
 const PopularWatches = ({ watches, title, mx, px }) => {
-  const [favorites, setFavorites] = useState({});
-  const { setDataViewDetail } = useCurrentApp();
+  const { setDataViewDetail, favorite, toggleFavorite } = useCurrentApp();
   const navigate = useNavigate();
-
-  const toggleFavorite = (e, id) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setFavorites((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
 
   const handleViewDetail = (watch) => {
     setDataViewDetail(watch);
     navigate(`/product/${watch.id}`);
+  };
+
+  const isFavorite = (id) => {
+    return favorite.some((item) => item.id === id);
   };
 
   return (
@@ -44,11 +37,15 @@ const PopularWatches = ({ watches, title, mx, px }) => {
 
               <button
                 className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
-                  favorites[watch.id] ? "text-red-500" : "text-gray-500"
+                  isFavorite(watch.id) ? "text-red-500" : "text-gray-500"
                 } hover:text-red-500`}
-                onClick={(e) => toggleFavorite(e, watch.id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFavorite(watch);
+                }}
               >
-                {favorites[watch.id] ? <HeartFilled /> : <HeartOutlined />}
+                {isFavorite(watch.id) ? <HeartFilled /> : <HeartOutlined />}
               </button>
             </div>
 
