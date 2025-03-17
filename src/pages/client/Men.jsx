@@ -3,7 +3,14 @@ import PopularWatches from "../../components/PopularWatches";
 import { watchesMen } from "../../data";
 import icon from "../../assets/icon-filter.png";
 import banner from "../../assets/banner_Men.png";
+import useWatches from "../../apiservice/apiProduct";
 const MenPage = () => {
+  const { watches, loading } = useWatches();
+
+  if (loading) return <div>Loading...</div>;
+
+  const maleWatches = watches.filter((watch) => watch.category === "Nam");
+
   return (<>
       <div className="container mt-4 mb-20 mx-auto ">
         <p className="flex justify-center [color:#6B6B6B] text-3xl font-bold">Đồng hồ nam đẹp chính hãng,cao cấp,mẫu mới 2025,góp 0%</p>
@@ -37,7 +44,7 @@ const MenPage = () => {
                 <span className="text-gray-700 font-medium">Bộ lọc</span>
               </div>
               {/* Popular Watches */}
-              <PopularWatches watches={watchesMen} title="" />
+              <PopularWatches watches={ maleWatches} title="" />
         </div>
       </div>
       

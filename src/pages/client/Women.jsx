@@ -1,9 +1,15 @@
 
 import icon from "../../assets/icon-filter.png";
 import banner from "../../assets/banner_Women.png";
-import { watchesWomen } from "../../data";
+// import { watchesWomen } from "../../data";
 import PopularWatches from "../../components/PopularWatches";
+import useWatches from "../../apiservice/apiProduct";
 const WomenPage = () => {
+  const { watches, loading } = useWatches();
+
+  if (loading) return <div>Loading...</div>;
+
+  const femaleWatches = watches.filter((watch) => watch.category === "Nữ");
   return  <div className="container mt-4 mb-20 mx-auto ">
   <p className="flex justify-center [color:#6B6B6B] text-3xl font-bold">Đồng hồ nữ đẹp, cao cấp chính hãng 100%, góp 0%, 1 đổi 1</p>
   {/* <Banner /> */}
@@ -30,7 +36,7 @@ const WomenPage = () => {
           <span className="text-gray-700 font-medium">Bộ lọc</span>
         </div>
         {/* Popular Watches */}
-        <PopularWatches watches={watchesWomen} title="" />
+        <PopularWatches watches={femaleWatches} title="" />
   </div>
 </div>
 };
