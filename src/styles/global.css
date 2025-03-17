@@ -28,3 +28,17 @@
     background: #7d7d7d;
   }
 }
+#root {
+  transform: scale(0.8); /* Phóng nhỏ 80% */
+  transform-origin: top center; /* Giữ điểm bắt đầu thu nhỏ */
+  width: 100%; /* Đảm bảo chiều ngang full */
+  height: 100vh; /* Đảm bảo chiều cao toàn màn hình */
+  display: flex;
+  flex-direction: column; /* Đảm bảo bố cục theo chiều dọc */
+}
+
+footer {
+  margin-top: auto; /* Đẩy footer xuống cuối cùng */
+}
+
+

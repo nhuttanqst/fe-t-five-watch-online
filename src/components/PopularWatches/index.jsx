@@ -2,6 +2,8 @@ import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useCurrentApp } from "../../context/app.context";
 
+
+
 const PopularWatches = ({ watches, title, mx, px }) => {
   const { setDataViewDetail, favorite, toggleFavorite } = useCurrentApp();
   const navigate = useNavigate();
