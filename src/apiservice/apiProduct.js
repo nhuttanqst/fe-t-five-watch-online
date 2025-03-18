@@ -28,8 +28,9 @@ const useWatches = () => {
               images: allImages, // Lưu tất cả ảnh
               image: allImages[0] || "default-image-url", // Ảnh chính
               name: watch.tenDH,
-              price: watch.giaBan,
+              price: watch.giaBan.toLocaleString("vi-VN", { style: "currency", currency: "VND" }), // Định dạng giá bán
               category: watch.danhMuc,
+              moTa:watch.moTa
             };
           })
         );

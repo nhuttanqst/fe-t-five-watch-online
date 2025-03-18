@@ -56,7 +56,7 @@ const PopularWatches = ({ watches, title, mx, px }) => {
             </p>
 
             <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
-              {watch.price}
+              {watch.price }
             </p>
           </div>
         ))}
