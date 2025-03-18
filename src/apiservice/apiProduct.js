@@ -14,17 +14,19 @@ const useWatches = () => {
 
         const formattedData = await Promise.all(
           products.map(async (watch) => {
-            const imageId = watch.hinhAnh?.[0];
-            const imageUrl = imageId
-              ? await fetch(`http://localhost:5004/api/product/getOneAnh/${imageId}`)
+            const allImages = await Promise.all(
+              watch.hinhAnh?.map((imageId) =>
+                fetch(`http://localhost:5004/api/product/getOneAnh/${imageId}`)
                   .then((res) => res.json())
                   .then((data) => data.productData?.duLieuAnh || "default-image-url")
                   .catch(() => "default-image-url")
-              : "default-image-url";
+              ) || []
+            );
 
             return {
               id: watch._id,
-              image: imageUrl,
+              images: allImages, // Lưu tất cả ảnh
+              image: allImages[0] || "default-image-url", // Ảnh chính
               name: watch.tenDH,
               price: watch.giaBan,
               category: watch.danhMuc,
@@ -47,3 +49,4 @@ const useWatches = () => {
 };
 
 export default useWatches;
+

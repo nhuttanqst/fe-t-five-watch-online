@@ -9,9 +9,11 @@ const HomePage = () => {
   const { watches, loading } = useWatches();
 
   if (loading) return <div>Loading...</div>;
+  // console.log("Data View Detail:", watches);
 
   const maleWatches = watches.filter((watch) => watch.category === "Nam");
   const femaleWatches = watches.filter((watch) => watch.category === "Nữ");
+  const coupleWatches = watches.filter((watch) => watch.category === "Couple");
   return (
     <div className="container mt-4 mb-20 mx-auto">
       <Banner />
@@ -20,7 +22,7 @@ const HomePage = () => {
       <PopularWatches watches={maleWatches} title="ĐỒNG HỒ NAM BÁN CHẠY" />
       {/* Nếu muốn thêm các danh mục khác: */}
       <PopularWatches watches={femaleWatches} title="ĐỒNG HỒ NỮ BÁN CHẠY" />
-      {/* <PopularWatches watches={watchesCouple} title="ĐỒNG HỒ CẶP ĐÔI BÁN CHẠY" /> */}
+      <PopularWatches watches={coupleWatches} title="ĐỒNG HỒ CẶP ĐÔI BÁN CHẠY" />
     </div>
   );
 };
