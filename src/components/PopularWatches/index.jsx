@@ -23,7 +23,8 @@ const PopularWatches = ({ watches, title, mx, px }) => {
         {title}
       </h2>
 
-      <div className={`grid grid-cols-4 gap-6 ${mx ? "mx-0" : "mx-20"}`}>
+      <div className={`grid gap-6 ${mx ? "mx-0" : "mx-20"} overflow-auto grid-cols-2 sm:grid-cols-3 md:grid-cols-4`}>
+
         {watches.map((watch) => (
           <div
             key={watch.id}

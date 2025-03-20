@@ -136,6 +136,16 @@ const ProductDetailPage = () => {
         </button>
       </div>
     </div>
+
+    {/* Display total price */}
+  <div className="mt-4">
+    <span className="text-lg font-semibold">Tổng tiền: </span>
+    <span className="text-xl text-[#C40D2E] font-bold">
+    {dataViewDetail?.price
+      ? (Number(dataViewDetail.price.replace(/[^\d]/g, "")) * quantity).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+      : "Đang tải..."}
+    </span>
+  </div>
     <button
       className="flex items-center justify-center cursor-pointer w-full h-12 rounded-lg bg-[#993333] text-white text-lg font-semibold mt-6 p-2 uppercase 
       transition-all duration-300 ease-in-out hover:bg-red-500 hover:shadow-lg active:scale-97"
