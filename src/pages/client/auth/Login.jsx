@@ -1,9 +1,50 @@
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Divider, Form, Input } from "antd";
+import { useCurrentApp } from "../../../context/app.context";
+import { loginApi } from "../../../services/api";
 import "./Login.css";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [isSubmit, setIsSubmit] = useState(false);
+  const { setIsAuthenticated, setUser, messageApi } = useCurrentApp();
+
+  const emailInputRef = useRef(null);
+
+  const onFinish = async (values) => {
+    setIsSubmit(true);
+    const { email, matKhau } = values;
+    const res = await loginApi({
+      email,
+      matKhau,
+    });
+
+    if (res?.data) {
+      setIsAuthenticated(true);
+      setUser(res.data.user);
+      localStorage.setItem("accessToken", res.data.accessToken);
+      messageApi.open({
+        type: "success",
+        content: "Đăng nhập thành công!",
+      });
+      navigate("/");
+    } else {
+      messageApi.open({
+        type: "error",
+        content:
+          res.message && Array.isArray(res.message)
+            ? res.message[0]
+            : res.message,
+      });
+    }
+    setIsSubmit(false);
+  };
+
+  useEffect(() => {
+    emailInputRef?.current?.focus();
+  }, []);
 
   return (
     <>
@@ -14,24 +55,38 @@ const LoginPage = () => {
               Đăng Nhập
             </h2>
             <Divider />
-            <Form form={form} layout="vertical">
+            <Form form={form} layout="vertical" onFinish={onFinish}>
               <Form.Item
                 label="Email"
-                name="username"
+                name="email"
                 rules={[
                   { required: true, message: "Vui lòng nhập email!" },
                   { type: "email", message: "Email không hợp lệ!" },
                 ]}
               >
-                <Input />
+                <Input
+                  ref={emailInputRef}
+                  onKeyDown={(e) => {
+                    if (e.key === " " && !e.target.value.trim()) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
               </Form.Item>
 
               <Form.Item
                 label="Mật khẩu"
-                name="password"
+                name="matKhau"
                 rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
               >
-                <Input.Password autoComplete="" />
+                <Input.Password
+                  autoComplete=""
+                  onKeyDown={(e) => {
+                    if (e.key === " " && !e.target.value.trim()) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
               </Form.Item>
 
               <div className="flex justify-between items-center">
@@ -40,6 +95,7 @@ const LoginPage = () => {
                     style={{ backgroundColor: "#A51717", color: "#fff" }}
                     type="default"
                     htmlType="submit"
+                    loading={isSubmit}
                   >
                     Đăng nhập
                   </Button>

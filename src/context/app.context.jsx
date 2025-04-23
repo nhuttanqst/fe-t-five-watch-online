@@ -1,14 +1,47 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
+import { message, notification, Spin } from "antd";
+import { fetchAccountApi } from "../services/api";
 
 const CurrentAppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [isAppLoading, setIsAppLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAppLoading, setIsAppLoading] = useState(true);
   const [carts, setCarts] = useState([]);
   const [favorite, setFavorite] = useState([]);
   const [dataViewDetail, setDataViewDetail] = useState({});
+  const [messageApi, contextHolder] = message.useMessage();
+  const [notificationApi, contextNotifiHolder] = notification.useNotification();
+
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+
+        if (!accessToken) {
+          setIsAppLoading(false);
+          return;
+        }
+
+        const res = await fetchAccountApi();
+
+        if (res.data) {
+          setUser(res.data.user);
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem("accessToken");
+        }
+      } catch (error) {
+        console.log("error: ", error);
+        localStorage.removeItem("accessToken");
+      }
+      setIsAppLoading(false);
+    };
+
+    fetchAccount();
+  }, []);
 
   const toggleFavorite = (product) => {
     setFavorite((prev) => {
@@ -40,6 +73,14 @@ export const AppProvider = ({ children }) => {
             setFavorite,
             toggleFavorite,
             removeFromFavorite,
+            user,
+            setUser,
+            isAuthenticated,
+            setIsAuthenticated,
+            messageApi,
+            contextHolder,
+            notificationApi,
+            contextNotifiHolder,
           }}
         >
           {children}
