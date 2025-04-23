@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Badge, Dropdown } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import { logoutApi } from "../../services/api";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/loggo.png";
 import searchIcon from "../../assets/search.png";
 import cartIcon from "../../assets/cart.png";
 import heartIcon from "../../assets/heart.png";
@@ -95,7 +95,7 @@ const Header = () => {
             onClick={() => navigate("/")}
             className="absolute left-1/2 transform -translate-x-1/2 cursor-pointer"
           >
-            <img src={logo} alt="T-Five Watch" className="h-35" />
+            <img src={logo} alt="T-Five Watch" className="h-50" />
           </div>
 
           <div className="flex items-center space-x-6 ml-auto">
