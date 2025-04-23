@@ -95,7 +95,7 @@ const Header = () => {
             onClick={() => navigate("/")}
             className="absolute left-1/2 transform -translate-x-1/2 cursor-pointer"
           >
-            <img src={logo} alt="T-Five Watch" className="h-50" />
+            <img src={logo} alt="T-Five Watch" className="h-50 " />
           </div>
 
           <div className="flex items-center space-x-6 ml-auto">
