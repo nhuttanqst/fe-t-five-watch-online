@@ -50,7 +50,9 @@ const RegisterPage = () => {
       <div className="register-page">
         <div className="container">
           <div className="register-form">
-            <h2 className="font-semibold text-xl text-center">ĐĂNG KÝ</h2>
+            <h2 className="font-semibold text-xl text-center select-none">
+              ĐĂNG KÝ
+            </h2>
             <Divider />
             <Form form={form} layout="vertical" onFinish={onFinish}>
               <Form.Item
@@ -198,7 +200,7 @@ const RegisterPage = () => {
             </Form>
 
             <Divider>Or</Divider>
-            <p className="question">
+            <p className="question select-none">
               Đã có tài khoản ? &nbsp;
               <span>
                 <Link className="text-link" to={"/login"}>

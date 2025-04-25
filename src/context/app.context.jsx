@@ -43,6 +43,34 @@ export const AppProvider = ({ children }) => {
     fetchAccount();
   }, []);
 
+  const addToCart = (product, quantity) => {
+    setCarts((prevCarts) => {
+      const existingItem = prevCarts.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        return prevCarts.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        return [...prevCarts, { ...product, quantity }];
+      }
+    });
+  };
+
+  const removeFromCart = (productId) => {
+    setCarts((prevCarts) => prevCarts.filter((item) => item.id !== productId));
+  };
+
+  const updateCartItemQuantity = (productId, quantity) => {
+    setCarts((prevCarts) =>
+      prevCarts.map((item) =>
+        item.id === productId ? { ...item, quantity } : item
+      )
+    );
+  };
+
   const toggleFavorite = (product) => {
     setFavorite((prev) => {
       const isFavorite = prev.some((item) => item.id === product.id);
@@ -60,43 +88,47 @@ export const AppProvider = ({ children }) => {
 
   return (
     <>
-      {isAppLoading === false ? (
-        <CurrentAppContext.Provider
-          value={{
-            isAppLoading,
-            setIsAppLoading,
-            carts,
-            setCarts,
-            dataViewDetail,
-            setDataViewDetail,
-            favorite,
-            setFavorite,
-            toggleFavorite,
-            removeFromFavorite,
-            user,
-            setUser,
-            isAuthenticated,
-            setIsAuthenticated,
-            messageApi,
-            contextHolder,
-            notificationApi,
-            contextNotifiHolder,
-          }}
-        >
-          {children}
-        </CurrentAppContext.Provider>
-      ) : (
-        <div
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
+      {contextHolder}
+      {contextNotifiHolder}
+
+      {isAppLoading ? (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+          <Spin
+            indicator={
+              <LoadingOutlined
+                style={{ fontSize: 48, color: "#A51717" }}
+                spin
+              />
+            }
+          />
         </div>
-      )}
+      ) : null}
+
+      <CurrentAppContext.Provider
+        value={{
+          isAppLoading,
+          setIsAppLoading,
+          carts,
+          setCarts,
+          addToCart,
+          removeFromCart,
+          updateCartItemQuantity,
+          dataViewDetail,
+          setDataViewDetail,
+          favorite,
+          setFavorite,
+          toggleFavorite,
+          removeFromFavorite,
+          user,
+          setUser,
+          isAuthenticated,
+          setIsAuthenticated,
+          messageApi,
+          notificationApi,
+        }}
+      >
+        {!isAppLoading && children}
+      </CurrentAppContext.Provider>
     </>
   );
 };

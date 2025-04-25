@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Badge, Dropdown } from "antd";
 import { useCurrentApp } from "../../context/app.context";
@@ -7,7 +8,6 @@ import searchIcon from "../../assets/search.png";
 import cartIcon from "../../assets/cart.png";
 import heartIcon from "../../assets/heart.png";
 import userIcon from "../../assets/user.png";
-import { useEffect, useState } from "react";
 
 const Header = () => {
   const {

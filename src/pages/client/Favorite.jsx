@@ -36,7 +36,7 @@ const FavoritePage = () => {
                 </Link>
 
                 <button
-                  className="absolute top-0 right-0 text-gray-500 hover:text-red-500 transition-all duration-300"
+                  className="absolute top-0 right-0 text-gray-500 hover:text-red-500 transition-all duration-300 cursor-pointer"
                   onClick={() => removeFromFavorite(watch.id)}
                 >
                   <CloseOutlined />
