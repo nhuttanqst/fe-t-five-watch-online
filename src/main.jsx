@@ -9,6 +9,7 @@ import WomenPage from "./pages/client/Women";
 import CouplePage from "./pages/client/Couple";
 import ContactPage from "./pages/client/Contact";
 import CartPage from "./pages/client/Cart";
+import ErrorPage from "./pages/client/Error";
 import FavoritePage from "./pages/client/Favorite";
 import ProductDetailPage from "./pages/client/ProductDetail";
 import ForgotPasswordPage from "./pages/client/auth/ForgotPassword";
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <div>404 Not Found</div>,
+    element: <ErrorPage />,
   },
 ]);
 
