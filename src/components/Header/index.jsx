@@ -88,7 +88,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="w-full border-b-2 border-b-[#EDEDED] shadow-sm bg-white">
+    <header className="w-full border-b-2 border-b-[#EDEDED] bg-white">
       <div className="container mx-auto flex flex-col items-center pt-4 pb-1 px-6">
         <div className="w-full flex items-center justify-between py-6">
           <div
