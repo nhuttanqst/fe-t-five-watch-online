@@ -167,7 +167,7 @@ const CartPage = () => {
             className="flex flex-col items-center justify-center min-h-[450px]"
           >
             <Link to="/">
-              <button className="bg-[#A51717] text-white py-2 px-4 rounded-full text-lg font-semibold cursor-pointer hover:bg-red-600 transition duration-300 mt-2">
+              <button className="bg-[#A51717] text-white py-3 px-6 rounded-lg text-lg font-semibold cursor-pointer hover:bg-red-600 transition duration-300 mt-2">
                 Tiếp tục mua sắm
               </button>
             </Link>

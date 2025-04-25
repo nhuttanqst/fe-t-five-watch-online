@@ -57,7 +57,7 @@ const FavoritePage = () => {
 
           <Link
             to="/"
-            className="mt-6 px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-lg transition-all duration-300 hover:bg-blue-600 hover:scale-105"
+            className="mt-6 px-6 py-3 bg-[#A51717] text-white text-lg font-semibold rounded-lg transition-all duration-300 hover:bg-red-600 hover:scale-105"
           >
             Tiếp tục mua sắm
           </Link>
