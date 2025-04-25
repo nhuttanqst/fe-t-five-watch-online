@@ -113,7 +113,7 @@ const Header = () => {
             <div className="flex space-x-7 text-gray-600 text-lg mr-[100px]">
               <button
                 onClick={() => navigate("/cart")}
-                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
+                className="flex items-center hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
                 <Badge count={0} size={"small"} showZero>
                   <img width="26px" src={cartIcon} alt="Cart Icon" />
@@ -121,14 +121,14 @@ const Header = () => {
               </button>
               <button
                 onClick={() => navigate("/favorite")}
-                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
+                className="flex items-center hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
                 <Badge count={favorite.length ?? 0} size={"small"} showZero>
                   <img width="26px" src={heartIcon} alt="Heart Icon" />
                 </Badge>
               </button>
               {isAuthenticated ? (
-                <Dropdown menu={{ items }} placement="bottomRight">
+                <Dropdown menu={{ items }} placement="bottomCenter">
                   <div className="flex items-center space-x-2 cursor-pointer hover:text-red-500 transition-all duration-300 hover:opacity-80">
                     <img
                       src={user.avatar || userIcon}
