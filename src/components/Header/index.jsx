@@ -128,7 +128,7 @@ const Header = () => {
                 </Badge>
               </button>
               {isAuthenticated ? (
-                <Dropdown menu={{ items }} placement="bottomCenter">
+                <Dropdown menu={{ items }} placement="bottom">
                   <div className="flex items-center space-x-2 cursor-pointer hover:text-red-500 transition-all duration-300 hover:opacity-80">
                     <img
                       src={user.avatar || userIcon}
