@@ -164,7 +164,7 @@ const CartPage = () => {
               height: 140,
               width: 140,
             }}
-            className="flex flex-col items-center justify-center min-h-[500px]"
+            className="flex flex-col items-center justify-center min-h-[450px]"
           >
             <Link to="/">
               <button className="bg-[#A51717] text-white py-2 px-4 rounded-full text-lg font-semibold cursor-pointer hover:bg-red-600 transition duration-300 mt-2">
