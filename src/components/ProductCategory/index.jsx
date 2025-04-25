@@ -39,7 +39,7 @@ const ProductCategories = () => {
               <img src={item.icon} alt={item.title} className="w-20 h-20" />
             </div>
 
-            <p className="text-gray-700 text-sm mt-2 text-center w-24">
+            <p className="text-gray-700 text-sm mt-2 text-center w-24 select-none">
               {item.title}
             </p>
           </div>
