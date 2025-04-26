@@ -9,13 +9,8 @@ import creditcard from "../../assets/creditcard.png";
 import { useCurrentApp } from "../../context/app.context";
 
 const CartPage = () => {
-  const {
-    carts,
-    updateCartItemQuantity,
-    removeFromCart,
-    messageApi,
-    contextHolder,
-  } = useCurrentApp();
+  const { carts, updateCartItemQuantity, removeFromCart, messageApi } =
+    useCurrentApp();
   const [form] = Form.useForm();
 
   // Hàm tăng số lượng
@@ -55,22 +50,16 @@ const CartPage = () => {
     }, 0);
   };
 
-  // Xử lý submit form
   const handleSubmit = (values) => {
-    if (carts.length === 0) {
-      messageApi.error("Giỏ hàng của bạn đang trống!");
-      return;
-    }
-
-    // Kiểm tra thông tin form cơ bản được thực hiện bởi Form của antd
-    messageApi.success("Đặt hàng thành công!");
-    // TODO: Gửi dữ liệu đặt hàng lên server
+    messageApi.open({
+      type: "success",
+      content: "Đặt hàng thành công!",
+    });
     console.log("Submitted values:", values);
   };
 
   return (
     <div className="max-w-4xl mx-auto my-14">
-      {contextHolder}
       <div className="flex flex-col space-y-6">
         {carts.length > 0 ? (
           <div className="flex flex-col space-y-6 border px-6 py-4 border-gray-300 rounded-xl shadow-2xl">
