@@ -14,6 +14,7 @@ const Header = () => {
     favorite,
     user,
     carts,
+    setCarts,
     isAuthenticated,
     setIsAppLoading,
     setUser,
@@ -52,6 +53,7 @@ const Header = () => {
       if (response) {
         setUser(null);
         setIsAuthenticated(false);
+        setCarts([]);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("carts");
         messageApi.success({

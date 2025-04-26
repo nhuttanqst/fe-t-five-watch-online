@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Col, Row, Empty, Form, Input, Radio, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -12,6 +12,7 @@ import creditcard from "../../assets/creditcard.png";
 const CartPage = () => {
   const navigate = useNavigate();
   const {
+    user,
     carts,
     setCarts,
     updateCartItemQuantity,
@@ -21,6 +22,17 @@ const CartPage = () => {
   } = useCurrentApp();
   const [form] = Form.useForm();
   const [isSubmit, setIsSubmit] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      form.setFieldsValue({
+        tenNguoiDung: user.tenNguoiDung,
+        sdt: user.sdt,
+        email: user.email,
+        phuongThucThanhToan: "COD",
+      });
+    }
+  }, [user]);
 
   const handleIncreaseQuantity = (itemId) => {
     const item = carts.find((item) => item.id === itemId);
@@ -34,13 +46,19 @@ const CartPage = () => {
     if (item && item.quantity > 1) {
       updateCartItemQuantity(itemId, item.quantity - 1);
     } else {
-      messageApi.error("Số lượng không thể nhỏ hơn 1!");
+      messageApi.open({
+        type: "error",
+        content: "Số lượng không thể nhỏ hơn 1!",
+      });
     }
   };
 
   const handleRemoveItem = (itemId) => {
     removeFromCart(itemId);
-    messageApi.success("Đã xóa sản phẩm khỏi giỏ hàng!");
+    messageApi.open({
+      type: "success",
+      content: "Xóa sản phẩm khỏi giỏ hàng thành công!",
+    });
   };
 
   const calculateTotal = () => {
