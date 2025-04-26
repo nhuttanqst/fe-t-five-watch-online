@@ -53,6 +53,7 @@ const Header = () => {
         setUser(null);
         setIsAuthenticated(false);
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("carts");
         messageApi.success({
           content: "Đăng xuất thành công!",
           duration: 2,

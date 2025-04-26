@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/Layout";
+import PaymentResult from "./components/PaymentResult";
 import HomePage from "./pages/client/Home";
 import MenPage from "./pages/client/Men";
 import WomenPage from "./pages/client/Women";
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: "/update-new-password",
         element: <UpdateNewPassword />,
+      },
+      {
+        path: "/payment-result",
+        element: <PaymentResult />,
       },
     ],
   },

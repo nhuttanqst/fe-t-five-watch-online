@@ -43,32 +43,49 @@ export const AppProvider = ({ children }) => {
     fetchAccount();
   }, []);
 
+  useEffect(() => {
+    const carts = localStorage.getItem("carts");
+    if (carts) setCarts(JSON.parse(carts));
+  }, []);
+
   const addToCart = (product, quantity) => {
     setCarts((prevCarts) => {
       const existingItem = prevCarts.find((item) => item.id === product.id);
 
       if (existingItem) {
-        return prevCarts.map((item) =>
+        const newCarts = prevCarts.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
+        localStorage.setItem("carts", JSON.stringify(newCarts));
+        return newCarts;
       } else {
+        localStorage.setItem(
+          "carts",
+          JSON.stringify([...prevCarts, { ...product, quantity }])
+        );
         return [...prevCarts, { ...product, quantity }];
       }
     });
   };
 
   const removeFromCart = (productId) => {
-    setCarts((prevCarts) => prevCarts.filter((item) => item.id !== productId));
+    setCarts((prevCarts) => {
+      const newCarts = prevCarts.filter((item) => item.id !== productId);
+      localStorage.setItem("carts", JSON.stringify(newCarts));
+      return newCarts;
+    });
   };
 
   const updateCartItemQuantity = (productId, quantity) => {
-    setCarts((prevCarts) =>
-      prevCarts.map((item) =>
+    setCarts((prevCarts) => {
+      const newCarts = prevCarts.map((item) =>
         item.id === productId ? { ...item, quantity } : item
-      )
-    );
+      );
+      localStorage.setItem("carts", JSON.stringify(newCarts));
+      return newCarts;
+    });
   };
 
   const toggleFavorite = (product) => {

@@ -92,7 +92,14 @@ const LoginPage = () => {
               <div className="flex justify-between items-center">
                 <Form.Item label={null}>
                   <Button
-                    style={{ backgroundColor: "#A51717", color: "#fff" }}
+                    className="login-button"
+                    style={{
+                      backgroundColor: "#A51717",
+                      color: "#fff",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
                     type="default"
                     htmlType="submit"
                     loading={isSubmit}

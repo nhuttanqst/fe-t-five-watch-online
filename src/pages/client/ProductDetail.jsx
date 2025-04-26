@@ -77,7 +77,6 @@ const ProductDetailPage = () => {
   const handleAddToCart = () => {
     if (dataViewDetail) {
       addToCart(dataViewDetail, quantity);
-
       messageApi.open({
         type: "success",
         content: "Thêm vào giỏ hàng thành công!",

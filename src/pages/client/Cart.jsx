@@ -1,17 +1,26 @@
-// import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Col, Row, Empty, Form, Input, Radio } from "antd";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Col, Row, Empty, Form, Input, Radio, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useCurrentApp } from "../../context/app.context";
+import { createOrderApi } from "../../services/api";
 import info from "../../assets/info.png";
 import discount from "../../assets/discount.png";
 import location from "../../assets/location.png";
 import creditcard from "../../assets/creditcard.png";
-import { useCurrentApp } from "../../context/app.context";
 
 const CartPage = () => {
-  const { carts, updateCartItemQuantity, removeFromCart, messageApi } =
-    useCurrentApp();
+  const navigate = useNavigate();
+  const {
+    carts,
+    setCarts,
+    updateCartItemQuantity,
+    removeFromCart,
+    messageApi,
+    notificationApi,
+  } = useCurrentApp();
   const [form] = Form.useForm();
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const handleIncreaseQuantity = (itemId) => {
     const item = carts.find((item) => item.id === itemId);
@@ -45,12 +54,60 @@ const CartPage = () => {
     }, 0);
   };
 
-  const handleSubmit = (values) => {
-    messageApi.open({
-      type: "success",
-      content: "Đặt hàng thành công!",
-    });
-    console.log("Submitted values:", values);
+  const handleSubmit = async (values) => {
+    setIsSubmit(true);
+    const chiTietDonHang = carts.map((cart) => ({
+      sanPhamId: cart.id,
+      tenSanPham: cart.name,
+      soLuong: cart.quantity,
+      giaBan: parseInt(cart.price.replace(/[^\d]/g, ""), 10),
+    }));
+
+    const order = {
+      ...values,
+      trangThaiThanhToan: "Chưa thanh toán",
+      ghiChu: values.ghiChu ?? "",
+      chiTietDonHang,
+      tongTien: calculateTotal(),
+    };
+
+    const res = await createOrderApi(order);
+
+    if (res?.data) {
+      localStorage.removeItem("carts");
+      setCarts([]);
+      if (values.phuongThucThanhToan === "COD") {
+        messageApi.open({
+          type: "success",
+          content: "Đặt hàng thành công!",
+        });
+        navigate("/payment-result");
+      } else {
+        if (res.data.payment) {
+          window.location.href = res.data.payment.momoPayUrl;
+        } else {
+          notificationApi.error({
+            message: "Có lỗi xảy ra",
+            description:
+              res.message && Array.isArray(res.message)
+                ? res.message[0]
+                : res.message,
+            duration: 5,
+          });
+        }
+      }
+    } else {
+      notificationApi.error({
+        message: "Có lỗi xảy ra",
+        description:
+          res.message && Array.isArray(res.message)
+            ? res.message[0]
+            : res.message,
+        duration: 5,
+      });
+    }
+
+    setIsSubmit(false);
   };
 
   return (
@@ -156,7 +213,7 @@ const CartPage = () => {
                     <Row gutter={[16, 16]}>
                       <Col span={12}>
                         <Form.Item
-                          name="customerName"
+                          name="tenNguoiDung"
                           rules={[
                             {
                               required: true,
@@ -173,7 +230,7 @@ const CartPage = () => {
                       </Col>
                       <Col span={12}>
                         <Form.Item
-                          name="customerPhone"
+                          name="sdt"
                           rules={[
                             {
                               required: true,
@@ -192,7 +249,7 @@ const CartPage = () => {
                     <Row className="mt-1">
                       <Col span={24}>
                         <Form.Item
-                          name="customerEmail"
+                          name="email"
                           rules={[
                             {
                               required: true,
@@ -216,7 +273,7 @@ const CartPage = () => {
 
                   {/* Thông tin nhận hàng */}
                   <div className="flex flex-col space-y-2">
-                    <div className="flex items-center space-x-2 mb-4 mt-4">
+                    <div className="flex items-center space-x-2 mt-4">
                       <img className="w-6 h-6" src={location} alt="image" />
                       <span className="font-semibold text-lg text-[#676971]">
                         Thông tin nhận hàng
@@ -231,7 +288,7 @@ const CartPage = () => {
                       <span className="text-sm text-black mb-1">Địa chỉ</span>
                     </div>
                     <Form.Item
-                      name="shippingAddress"
+                      name="diaChi"
                       rules={[
                         { required: true, message: "Vui lòng nhập địa chỉ!" },
                       ]}
@@ -242,33 +299,11 @@ const CartPage = () => {
                         style={{ padding: 8 }}
                       />
                     </Form.Item>
-
-                    <div className="flex items-center gap-2 font-semibold">
-                      <span className="text-red-500">*</span>
-                      <span className="text-sm text-black mb-1">
-                        Tỉnh/Thành Phố
-                      </span>
-                    </div>
-                    <Form.Item
-                      name="shippingCity"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng nhập Tỉnh/Thành phố!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
-                        placeholder="Tỉnh/Huyện/Thành phố"
-                        style={{ padding: 8 }}
-                      />
-                    </Form.Item>
                   </div>
 
                   {/* Thông tin bổ sung */}
                   <div className="flex flex-col space-y-2">
-                    <div className="flex items-center space-x-2 mb-3 mt-4">
+                    <div className="flex items-center space-x-2 mb-3">
                       <span className="font-semibold text-lg text-[#676971]">
                         THÔNG TIN BỔ SUNG
                       </span>
@@ -276,7 +311,7 @@ const CartPage = () => {
                     <span className="text-sm text-black mb-1 font-semibold">
                       Yêu cầu khác
                     </span>
-                    <Form.Item name="orderNotes" noStyle>
+                    <Form.Item name="ghiChu" noStyle>
                       <Input
                         className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
                         placeholder="Nhập yêu cầu (Không bắt buộc)"
@@ -293,7 +328,11 @@ const CartPage = () => {
                         Phương thức thanh toán
                       </span>
                     </div>
-                    <Form.Item name="paymentMethod" initialValue="COD" noStyle>
+                    <Form.Item
+                      name="phuongThucThanhToan"
+                      initialValue="COD"
+                      noStyle
+                    >
                       <Radio.Group className="w-full block">
                         <label className="block w-full mb-3 cursor-pointer">
                           <div className="flex items-center w-full">
@@ -317,12 +356,23 @@ const CartPage = () => {
 
                   {/* Nút Đặt Hàng */}
                   <Form.Item noStyle>
-                    <button
-                      type="submit"
+                    <Button
+                      htmlType="submit"
+                      color="danger"
+                      variant="solid"
+                      style={{
+                        padding: "20px 0",
+                        borderRadius: 20,
+                        backgroundColor: "#A51717",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        color: "#fff",
+                      }}
                       className="bg-[#A51717] text-white w-full py-3 rounded-full text-sm font-semibold mb-5 cursor-pointer hover:bg-red-600 transition duration-300"
+                      loading={isSubmit}
                     >
                       Đặt Hàng
-                    </button>
+                    </Button>
                   </Form.Item>
                 </Form>
               </>

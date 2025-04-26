@@ -1,6 +1,7 @@
 import createInstanceAxios from "./axios.customize";
 
 const axiosUser = createInstanceAxios(import.meta.env.VITE_BACKEND_USER_URL);
+const axiosOrder = createInstanceAxios(import.meta.env.VITE_BACKEND_ORDER_URL);
 
 export const registerApi = (data) => {
   return axiosUser.post("/api/auth/register", data);
@@ -24,4 +25,8 @@ export const fetchAccountApi = () => {
       delay: 1000,
     },
   });
+};
+
+export const createOrderApi = (data) => {
+  return axiosOrder.post("/api/orders", data);
 };
