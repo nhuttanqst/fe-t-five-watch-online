@@ -1,6 +1,6 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Col, Row, Empty } from "antd";
+import { Col, Row, Empty, Form, Input, Radio } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import info from "../../assets/info.png";
 import discount from "../../assets/discount.png";
@@ -16,14 +16,7 @@ const CartPage = () => {
     messageApi,
     contextHolder,
   } = useCurrentApp();
-  const [formData, setFormData] = useState({
-    customerName: "",
-    customerPhone: "",
-    customerEmail: "",
-    shippingAddress: "",
-    shippingCity: "",
-    orderNotes: "",
-  });
+  const [form] = Form.useForm();
 
   // Hàm tăng số lượng
   const handleIncreaseQuantity = (itemId) => {
@@ -63,36 +56,16 @@ const CartPage = () => {
   };
 
   // Xử lý submit form
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (values) => {
     if (carts.length === 0) {
       messageApi.error("Giỏ hàng của bạn đang trống!");
       return;
     }
 
-    // Kiểm tra thông tin form cơ bản
-    if (
-      !formData.customerName ||
-      !formData.customerPhone ||
-      !formData.shippingAddress ||
-      !formData.shippingCity
-    ) {
-      messageApi.error("Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
-
-    // Xử lý đặt hàng - có thể gọi API từ đây
+    // Kiểm tra thông tin form cơ bản được thực hiện bởi Form của antd
     messageApi.success("Đặt hàng thành công!");
     // TODO: Gửi dữ liệu đặt hàng lên server
-  };
-
-  // Cập nhật form data
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    console.log("Submitted values:", values);
   };
 
   return (
@@ -183,46 +156,79 @@ const CartPage = () => {
                   </span>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <Form
+                  form={form}
+                  onFinish={handleSubmit}
+                  layout="vertical"
+                  className="space-y-4"
+                >
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center space-x-2 mb-4 mt-4">
                       <img className="w-6 h-6" src={info} alt="image" />
-                      <label
-                        htmlFor="customerName"
-                        className="font-semibold text-lg text-[#676971]"
-                      >
+                      <span className="font-semibold text-lg text-[#676971]">
                         Thông tin khách hàng
-                      </label>
+                      </span>
                     </div>
                     <Row gutter={[16, 16]}>
                       <Col span={12}>
-                        <input
-                          id="customerName"
-                          className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
-                          placeholder="Tên khách hàng"
-                          value={formData.customerName}
-                          onChange={handleInputChange}
-                        />
+                        <Form.Item
+                          name="customerName"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập tên khách hàng!",
+                            },
+                          ]}
+                          noStyle
+                        >
+                          <Input
+                            className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
+                            placeholder="Tên khách hàng"
+                            style={{ padding: 8 }}
+                          />
+                        </Form.Item>
                       </Col>
                       <Col span={12}>
-                        <input
-                          id="customerPhone"
-                          className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
-                          placeholder="Số điện thoại"
-                          value={formData.customerPhone}
-                          onChange={handleInputChange}
-                        />
+                        <Form.Item
+                          name="customerPhone"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập số điện thoại!",
+                            },
+                          ]}
+                          noStyle
+                        >
+                          <Input
+                            className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
+                            placeholder="Số điện thoại"
+                            style={{ padding: 8 }}
+                          />
+                        </Form.Item>
                       </Col>
                     </Row>
                     <Row className="mt-1">
                       <Col span={24}>
-                        <input
-                          id="customerEmail"
-                          className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
-                          placeholder="Email"
-                          value={formData.customerEmail}
-                          onChange={handleInputChange}
-                        />
+                        <Form.Item
+                          name="customerEmail"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập email!",
+                            },
+                            {
+                              type: "email",
+                              message: "Email không hợp lệ!",
+                            },
+                          ]}
+                          noStyle
+                        >
+                          <Input
+                            className="w-full border border-black rounded-md text-[#676971] text-sm text-center"
+                            placeholder="Email"
+                            style={{ padding: 8 }}
+                          />
+                        </Form.Item>
                       </Col>
                     </Row>
                   </div>
@@ -231,12 +237,9 @@ const CartPage = () => {
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center space-x-2 mb-4 mt-4">
                       <img className="w-6 h-6" src={location} alt="image" />
-                      <label
-                        htmlFor="shippingAddress"
-                        className="font-semibold text-lg text-[#676971]"
-                      >
+                      <span className="font-semibold text-lg text-[#676971]">
                         Thông tin nhận hàng
-                      </label>
+                      </span>
                     </div>
                     <span className="text-sm text-black mb-4 font-semibold">
                       Quốc gia: Việt Nam
@@ -246,78 +249,103 @@ const CartPage = () => {
                       <span className="text-red-500">*</span>
                       <span className="text-sm text-black mb-1">Địa chỉ</span>
                     </div>
-                    <input
-                      id="shippingAddress"
-                      className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
-                      placeholder="Số nhà - Tên đường - Thôn/Xã"
-                      value={formData.shippingAddress}
-                      onChange={handleInputChange}
-                    />
+                    <Form.Item
+                      name="shippingAddress"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập địa chỉ!" },
+                      ]}
+                      noStyle
+                    >
+                      <Input
+                        className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
+                        placeholder="Số nhà - Tên đường - Thôn/Xã"
+                        style={{ padding: 8, marginBottom: 8 }}
+                      />
+                    </Form.Item>
+
                     <div className="flex items-center gap-2 font-semibold">
                       <span className="text-red-500">*</span>
                       <span className="text-sm text-black mb-1">
                         Tỉnh/Thành Phố
                       </span>
                     </div>
-                    <input
-                      id="shippingCity"
-                      className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
-                      placeholder="Tỉnh/Huyện/Thành phố"
-                      value={formData.shippingCity}
-                      onChange={handleInputChange}
-                    />
+                    <Form.Item
+                      name="shippingCity"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng nhập Tỉnh/Thành phố!",
+                        },
+                      ]}
+                      noStyle
+                    >
+                      <Input
+                        className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
+                        placeholder="Tỉnh/Huyện/Thành phố"
+                        style={{ padding: 8 }}
+                      />
+                    </Form.Item>
                   </div>
 
                   {/* Thông tin bổ sung */}
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center space-x-2 mb-3 mt-4">
-                      <label
-                        htmlFor="orderNotes"
-                        className="font-semibold text-lg text-[#676971]"
-                      >
+                      <span className="font-semibold text-lg text-[#676971]">
                         THÔNG TIN BỔ SUNG
-                      </label>
+                      </span>
                     </div>
                     <span className="text-sm text-black mb-1 font-semibold">
                       Yêu cầu khác
                     </span>
-                    <input
-                      id="orderNotes"
-                      className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
-                      placeholder="Nhập yêu cầu (Không bắt buộc)"
-                      value={formData.orderNotes}
-                      onChange={handleInputChange}
-                    />
+                    <Form.Item name="orderNotes" noStyle>
+                      <Input
+                        className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
+                        placeholder="Nhập yêu cầu (Không bắt buộc)"
+                        style={{ padding: 8, marginTop: 8 }}
+                      />
+                    </Form.Item>
                   </div>
 
                   {/* Phương thức thanh toán */}
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center space-x-2 mb-4 mt-4">
                       <img className="w-6 h-6" src={creditcard} alt="image" />
-                      <label className="font-semibold text-lg text-[#676971]">
+                      <span className="font-semibold text-lg text-[#676971]">
                         Phương thức thanh toán
-                      </label>
+                      </span>
                     </div>
-                    <label className="bg-[#F6F6F6] text-black font-semibold rounded-md border border-[#E0E0E0] text-sm flex items-center p-3 cursor-pointer mb-5">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="cod"
-                        className="w-4 h-4 mr-3"
-                        defaultChecked
-                      />
-                      <span>Thanh Toán Khi Nhận Hàng</span>
-                    </label>
+                    <Form.Item name="paymentMethod" initialValue="COD" noStyle>
+                      <Radio.Group className="w-full block">
+                        <label className="block w-full mb-3 cursor-pointer">
+                          <div className="flex items-center w-full">
+                            <Radio value="COD" className="mr-2" />
+                            <div className="bg-[#F6F6F6] text-black font-semibold rounded-md border border-[#E0E0E0] text-sm flex items-center p-3 cursor-pointer w-full">
+                              <span>Thanh Toán Khi Nhận Hàng</span>
+                            </div>
+                          </div>
+                        </label>
+                        <label className="block w-full mb-5 cursor-pointer">
+                          <div className="flex items-center w-full">
+                            <Radio value="MOMO" className="mr-2" />
+                            <div className="bg-[#F6F6F6] text-black font-semibold rounded-md border border-[#E0E0E0] text-sm flex items-center p-3 cursor-pointer w-full">
+                              <span>Thanh Toán Qua MoMo</span>
+                            </div>
+                          </div>
+                        </label>
+                      </Radio.Group>
+                    </Form.Item>
                   </div>
 
                   {/* Nút Đặt Hàng */}
-                  <button
-                    type="submit"
-                    className="bg-[#A51717] text-white w-full py-3 rounded-full text-sm font-semibold mb-5 cursor-pointer hover:bg-red-600 transition duration-300"
-                  >
-                    Đặt Hàng
-                  </button>
-                </form>
+                  <Form.Item noStyle>
+                    <button
+                      type="submit"
+                      className="bg-[#A51717] text-white w-full py-3 rounded-full text-sm font-semibold mb-5 cursor-pointer hover:bg-red-600 transition duration-300"
+                    >
+                      Đặt Hàng
+                    </button>
+                  </Form.Item>
+                </Form>
               </>
             )}
           </div>
