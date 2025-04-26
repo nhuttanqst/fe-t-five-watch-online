@@ -18,16 +18,12 @@ const PaymentResult = () => {
             title="Đặt hàng thành công!"
             subTitle="Hệ thống đã ghi nhận thông tin đơn hàng của bạn."
             extra={[
-              <Button key="home">
-                <Link to={"/"} type="primary">
-                  Trang Chủ
-                </Link>
-              </Button>,
-              <Button key="history">
-                <Link to={"/history"} type="primary">
-                  Lịch sử đơn hàng
-                </Link>
-              </Button>,
+              <Link to={"/"}>
+                <Button key="home">Trang chủ</Button>
+              </Link>,
+              <Link to={"/history"}>
+                <Button key="history">Lịch sử đơn hàng</Button>
+              </Link>,
             ]}
           />
         </div>

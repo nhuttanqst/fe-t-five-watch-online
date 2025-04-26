@@ -11,9 +11,9 @@ const ErrorPage = () => {
             title="404"
             subTitle="Trang bạn đang tìm kiếm không tồn tại."
             extra={
-              <Button type="primary">
-                <Link to="/">Quay lại</Link>
-              </Button>
+              <Link to="/">
+                <Button type="primary">Quay lại trang chủ</Button>
+              </Link>
             }
           />
         </div>
