@@ -237,12 +237,24 @@ const CartPage = () => {
                               required: true,
                               message: "Vui lòng nhập tên khách hàng!",
                             },
+                            {
+                              pattern: /^[^\d]+$/,
+                              message: "Tên không được chứa số!",
+                            },
                           ]}
                         >
                           <Input
                             className="w-full border border-black rounded-md text-[#676971] text-sm text-center"
                             placeholder="Tên khách hàng"
                             style={{ padding: 8 }}
+                            onKeyDown={(e) => {
+                              if (
+                                e.target.value.length === 0 &&
+                                e.key === " "
+                              ) {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                         </Form.Item>
                       </Col>
@@ -254,12 +266,25 @@ const CartPage = () => {
                               required: true,
                               message: "Vui lòng nhập số điện thoại!",
                             },
+                            {
+                              pattern: /^0\d{9}$/,
+                              message:
+                                "Số điện thoại phải bắt đầu từ số 0 và có 10 chữ số!",
+                            },
                           ]}
                         >
                           <Input
                             className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
                             placeholder="Số điện thoại"
                             style={{ padding: 8 }}
+                            onKeyDown={(e) => {
+                              if (
+                                e.target.value.length === 0 &&
+                                e.key === " "
+                              ) {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                         </Form.Item>
                       </Col>
@@ -277,12 +302,26 @@ const CartPage = () => {
                               type: "email",
                               message: "Email không hợp lệ!",
                             },
+                            {
+                              pattern:
+                                /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.-]?[a-zA-Z0-9]+)*(\.[a-zA-Z]{2,})+$/,
+                              message:
+                                "Email không được chứa ký tự đặc biệt hoặc dấu!",
+                            },
                           ]}
                         >
                           <Input
                             className="w-full border border-black rounded-md text-[#676971] text-sm text-center"
                             placeholder="Email"
                             style={{ padding: 8 }}
+                            onKeyDown={(e) => {
+                              if (
+                                e.target.value.length === 0 &&
+                                e.key === " "
+                              ) {
+                                e.preventDefault();
+                              }
+                            }}
                           />
                         </Form.Item>
                       </Col>
@@ -315,6 +354,11 @@ const CartPage = () => {
                         className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
                         placeholder="Số nhà - Tên đường - Thôn/Xã"
                         style={{ padding: 8 }}
+                        onKeyDown={(e) => {
+                          if (e.target.value.length === 0 && e.key === " ") {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </Form.Item>
                   </div>
@@ -334,6 +378,11 @@ const CartPage = () => {
                         className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
                         placeholder="Nhập yêu cầu (Không bắt buộc)"
                         style={{ padding: 8, marginTop: 8 }}
+                        onKeyDown={(e) => {
+                          if (e.target.value.length === 0 && e.key === " ") {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </Form.Item>
                   </div>
