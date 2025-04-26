@@ -13,7 +13,6 @@ const CartPage = () => {
     useCurrentApp();
   const [form] = Form.useForm();
 
-  // Hàm tăng số lượng
   const handleIncreaseQuantity = (itemId) => {
     const item = carts.find((item) => item.id === itemId);
     if (item) {
@@ -21,7 +20,6 @@ const CartPage = () => {
     }
   };
 
-  // Hàm giảm số lượng
   const handleDecreaseQuantity = (itemId) => {
     const item = carts.find((item) => item.id === itemId);
     if (item && item.quantity > 1) {
@@ -31,16 +29,13 @@ const CartPage = () => {
     }
   };
 
-  // Hàm xóa sản phẩm
   const handleRemoveItem = (itemId) => {
     removeFromCart(itemId);
     messageApi.success("Đã xóa sản phẩm khỏi giỏ hàng!");
   };
 
-  // Tính tổng tiền
   const calculateTotal = () => {
     return carts.reduce((total, item) => {
-      // Xử lý chuỗi giá tiền để lấy số
       const priceNumber =
         typeof item.price === "string"
           ? Number(item.price.replace(/[^\d]/g, ""))
