@@ -13,6 +13,7 @@ const Header = () => {
   const {
     favorite,
     user,
+    carts,
     isAuthenticated,
     setIsAppLoading,
     setUser,
@@ -115,7 +116,7 @@ const Header = () => {
                 onClick={() => navigate("/cart")}
                 className="flex items-center hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
-                <Badge count={0} size={"small"} showZero>
+                <Badge count={carts.length ?? 0} size={"small"} showZero>
                   <img width="26px" src={cartIcon} alt="Cart Icon" />
                 </Badge>
               </button>

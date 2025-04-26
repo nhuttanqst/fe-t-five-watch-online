@@ -179,10 +179,9 @@ const CartPage = () => {
                               message: "Vui lòng nhập tên khách hàng!",
                             },
                           ]}
-                          noStyle
                         >
                           <Input
-                            className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
+                            className="w-full border border-black rounded-md text-[#676971] text-sm text-center"
                             placeholder="Tên khách hàng"
                             style={{ padding: 8 }}
                           />
@@ -197,7 +196,6 @@ const CartPage = () => {
                               message: "Vui lòng nhập số điện thoại!",
                             },
                           ]}
-                          noStyle
                         >
                           <Input
                             className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
@@ -221,7 +219,6 @@ const CartPage = () => {
                               message: "Email không hợp lệ!",
                             },
                           ]}
-                          noStyle
                         >
                           <Input
                             className="w-full border border-black rounded-md text-[#676971] text-sm text-center"
@@ -254,12 +251,11 @@ const CartPage = () => {
                       rules={[
                         { required: true, message: "Vui lòng nhập địa chỉ!" },
                       ]}
-                      noStyle
                     >
                       <Input
                         className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
                         placeholder="Số nhà - Tên đường - Thôn/Xã"
-                        style={{ padding: 8, marginBottom: 8 }}
+                        style={{ padding: 8 }}
                       />
                     </Form.Item>
 
@@ -277,7 +273,6 @@ const CartPage = () => {
                           message: "Vui lòng nhập Tỉnh/Thành phố!",
                         },
                       ]}
-                      noStyle
                     >
                       <Input
                         className="w-full p-2 border border-black rounded-md text-[#676971] text-sm text-center"
