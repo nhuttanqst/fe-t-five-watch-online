@@ -158,18 +158,13 @@ const ProductDetailPage = () => {
       : "Đang tải..."}
     </span>
   </div>
-    <button
-      className="flex items-center justify-center cursor-pointer w-full h-12 rounded-lg bg-[#993333] text-white text-lg font-semibold mt-6 p-2 uppercase 
-      transition-all duration-300 ease-in-out hover:bg-red-500 hover:shadow-lg active:scale-97"
-      onClick={() =>
-        messageApi.open({
-          type: "success",
-          content: "Thêm vào giỏ hàng thành công!",
-        })
-      }
-    >
-      Thêm vào giỏ hàng
-    </button>
+  <button
+              className="flex items-center justify-center cursor-pointer w-full h-12 rounded-lg bg-[#993333] text-white text-lg font-semibold mt-6 p-2 uppercase 
+              transition-all duration-300 ease-in-out hover:bg-red-500 hover:shadow-lg active:scale-97"
+              onClick={handleAddToCart}
+            >
+              Thêm vào giỏ hàng
+            </button>
   </Col>
 </Row>
 

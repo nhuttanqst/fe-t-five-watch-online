@@ -24,20 +24,38 @@ const PopularWatches = ({ watches, title, mx, px }) => {
         {title}
       </h2>
 
-      <div className={`grid gap-6 ${mx ? "mx-0" : "mx-20"} overflow-auto grid-cols-2 sm:grid-cols-3 md:grid-cols-4`}>
 
-        {watches.map((watch) => (
-          <div
-            key={watch.id}
-            className="group mt- flex flex-col items-center text-center cursor-pointer transition-all duration-300 hover:scale-105"
-            onClick={() => handleViewDetail(watch)}
-          >
-            <div className="relative w-48 h-48 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
-              <img
-                src={watch.image}
-                alt={watch.name}
-                className="object-cover w-full h-full"
+      {loading ? (
+        <div className="flex items-center justify-center">
+          <Spin
+            indicator={
+              <LoadingOutlined
+                style={{ fontSize: 48, color: "#A51717" }}
+                spin
+
               />
+            }
+          />
+        </div>
+      ) : (
+        <div
+          className={`grid gap-6 ${
+            mx ? "mx-0" : "mx-20"
+          } grid-cols-2 sm:grid-cols-3 md:grid-cols-4 overflow-hidden`}
+        >
+          {watches.map((watch) => (
+            <div
+              key={watch.id}
+              className="group flex flex-col items-center text-center cursor-pointer transition-transform duration-300 hover:scale-105"
+              onClick={() => handleViewDetail(watch)}
+            >
+              <div className="relative w-48 h-48 flex items-center justify-center">
+                <img
+                  src={watch.image}
+                  alt={watch.name}
+                  className="object-cover w-full h-full"
+                   loading="lazy"
+                />
 
                 <button
                   className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
@@ -53,16 +71,23 @@ const PopularWatches = ({ watches, title, mx, px }) => {
                 </button>
               </div>
 
-              <p className="text-gray-700 text-sm mt-2 w-full px-2 truncate">
-                {watch.name}
-              </p>
+             
+
+
+            <p className="text-gray-700 text-sm mt-2 w-40 truncate transition-all duration-300 group-hover:scale-105">
+              {watch.name}
+            </p>
 
             <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
-              {watch.price }
+            {watch.price.toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  })}
             </p>
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 };
