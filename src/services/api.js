@@ -27,6 +27,22 @@ export const fetchAccountApi = () => {
   });
 };
 
+export const forgotPasswordApi = (email) => {
+  return axiosUser.post("/api/auth/forgotPassword", email);
+};
+
+export const verifyOtpApi = ({ email, otp }) => {
+  return axiosUser.post("/api/auth/verifyOtp", { email, otp });
+};
+
+export const resetPasswordApi = ({ email, matKhau }) => {
+  return axiosUser.post("/api/auth/resetPassword", { email, matKhau });
+};
+
 export const createOrderApi = (data) => {
   return axiosOrder.post("/api/orders", data);
+};
+
+export const getOrdersApi = (page = 1, limit = 10) => {
+  return axiosOrder.get(`/api/orders?page=${page}&limit=${limit}`);
 };

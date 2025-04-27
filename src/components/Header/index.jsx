@@ -80,9 +80,9 @@ const Header = () => {
       onClick: () => navigate("/profile"),
     },
     {
-      key: "orders",
-      label: "Đơn hàng",
-      onClick: () => navigate("/orders"),
+      key: "/history",
+      label: "Lịch sử mua hàng",
+      onClick: () => navigate("/history"),
     },
     {
       key: "logout",

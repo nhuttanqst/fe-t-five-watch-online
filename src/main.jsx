@@ -13,6 +13,7 @@ import CartPage from "./pages/client/Cart";
 import ErrorPage from "./pages/client/Error";
 import FavoritePage from "./pages/client/Favorite";
 import ProductDetailPage from "./pages/client/ProductDetail";
+import HistoryPage from "./pages/client/History";
 import ForgotPasswordPage from "./pages/client/auth/ForgotPassword";
 import UpdateNewPassword from "./pages/client/auth/UpdateNewPassword";
 import LoginPage from "./pages/client/auth/Login";
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: "/payment-result",
         element: <PaymentResult />,
+      },
+      {
+        path: "/history",
+        element: <HistoryPage />,
       },
     ],
   },
