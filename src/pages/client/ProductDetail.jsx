@@ -112,59 +112,63 @@ const ProductDetailPage = () => {
             </div>
           </Col>
 
-          <Col span={16}>
-            <h1 className="text-2xl font-bold text-[#676767] text-justify">
-              {dataViewDetail.name}
-            </h1>
-            <h2 className="text-4xl text-[#C40D2E] mt-4">
-              {dataViewDetail.price}
-            </h2>
-            <h3 className="text-sm text-[#676767] text-justify mt-4">
-              {dataViewDetail.moTa}
-            </h3>
-            <div className="flex items-center space-x-4 mt-4">
-              <span className="text-[#666666]">Số lượng</span>
-              <div className="flex items-center space-x-4">
-                <button
-                  className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105"
-                  onClick={handleDecreaseQuantity}
-                >
-                  -
-                </button>
-                <span className="text-xl">{quantity}</span>
-                <button
-                  className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105"
-                  onClick={handleIncreaseQuantity}
-                >
-                  +
-                </button>
-              </div>
-            </div>
+  <Col span={16}>
+    <h1 className="text-2xl font-bold text-[#676767] text-justify">
+    {dataViewDetail.name}
+    </h1>
+    <h2 className="text-4xl text-[#C40D2E] mt-4">
+    {dataViewDetail?.price
+    ? dataViewDetail.price.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      })
+    : "Đang tải..."}
+    </h2>
+    <h3 className="text-sm text-[#676767] text-justify mt-4">
+    {dataViewDetail.moTa}
+    </h3>
+    <div className="flex items-center space-x-4 mt-4">
+      <span className="text-[#666666]">Số lượng</span>
+      <div className="flex items-center space-x-4">
+        <button
+          className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105"
+          onClick={handleDecreaseQuantity}
+        >
+          -
+        </button>
+        <span className="text-xl">{quantity}</span>
+        <button
+          className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105"
+          onClick={handleIncreaseQuantity}
+        >
+          +
+        </button>
+      </div>
+    </div>
 
-            {/* Display total price */}
-            <div className="mt-4">
-              <span className="text-lg font-semibold">Tổng tiền: </span>
-              <span className="text-xl text-[#C40D2E] font-bold">
-                {dataViewDetail?.price
-                  ? (
-                      Number(dataViewDetail.price.replace(/[^\d]/g, "")) *
-                      quantity
-                    ).toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    })
-                  : "Đang tải..."}
-              </span>
-            </div>
-            <button
+    {/* Display total price */}
+  <div className="mt-4">
+    <span className="text-lg font-semibold">Tổng tiền: </span>
+    <span className="text-xl text-[#C40D2E] font-bold">
+    {dataViewDetail?.price
+      ? (dataViewDetail.price * quantity).toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        })
+      : "Đang tải..."}
+    </span>
+  </div>
+  <button
               className="flex items-center justify-center cursor-pointer w-full h-12 rounded-lg bg-[#993333] text-white text-lg font-semibold mt-6 p-2 uppercase 
               transition-all duration-300 ease-in-out hover:bg-red-500 hover:shadow-lg active:scale-97"
               onClick={handleAddToCart}
             >
               Thêm vào giỏ hàng
             </button>
-          </Col>
-        </Row>
+  </Col>
+</Row>
+
+           
 
         <div className="grid grid-cols-4 gap-6 mt-15 px-6 border-b border-gray-300 pb-15">
           {items.map((item, index) => (

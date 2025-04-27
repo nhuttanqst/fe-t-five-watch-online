@@ -24,6 +24,7 @@ const PopularWatches = ({ watches, title, mx, px }) => {
         {title}
       </h2>
 
+
       {loading ? (
         <div className="flex items-center justify-center">
           <Spin
@@ -31,6 +32,7 @@ const PopularWatches = ({ watches, title, mx, px }) => {
               <LoadingOutlined
                 style={{ fontSize: 48, color: "#A51717" }}
                 spin
+
               />
             }
           />
@@ -52,6 +54,7 @@ const PopularWatches = ({ watches, title, mx, px }) => {
                   src={watch.image}
                   alt={watch.name}
                   className="object-cover w-full h-full"
+                   loading="lazy"
                 />
 
                 <button
@@ -68,14 +71,22 @@ const PopularWatches = ({ watches, title, mx, px }) => {
                 </button>
               </div>
 
-              <p className="text-gray-700 text-sm mt-2 w-full px-2 truncate">
-                {watch.name}
-              </p>
+             
 
-              <p className="text-black font-bold text-lg">{watch.price}</p>
-            </div>
-          ))}
-        </div>
+
+            <p className="text-gray-700 text-sm mt-2 w-40 truncate transition-all duration-300 group-hover:scale-105">
+              {watch.name}
+            </p>
+
+            <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
+            {watch.price.toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  })}
+            </p>
+          </div>
+        ))}
+      </div>
       )}
     </div>
   );
