@@ -113,7 +113,12 @@ const ProductDetailPage = () => {
     {dataViewDetail.name}
     </h1>
     <h2 className="text-4xl text-[#C40D2E] mt-4">
-      {dataViewDetail.price}
+    {dataViewDetail?.price
+    ? dataViewDetail.price.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      })
+    : "Đang tải..."}
     </h2>
     <h3 className="text-sm text-[#676767] text-justify mt-4">
     {dataViewDetail.moTa}
@@ -142,7 +147,10 @@ const ProductDetailPage = () => {
     <span className="text-lg font-semibold">Tổng tiền: </span>
     <span className="text-xl text-[#C40D2E] font-bold">
     {dataViewDetail?.price
-      ? (Number(dataViewDetail.price.replace(/[^\d]/g, "")) * quantity).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+      ? (dataViewDetail.price * quantity).toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        })
       : "Đang tải..."}
     </span>
   </div>

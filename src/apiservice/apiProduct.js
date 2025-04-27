@@ -1,63 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const useWatches = (initialPage = 1, initialLimit = 20) => {
+const useWatches = (initialPage = 1, initialLimit = 10, category = '') => {
   const [watches, setWatches] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(initialPage); // Trạng thái cho trang hiện tại
-  const [limit, setLimit] = useState(initialLimit); // Trạng thái cho số sản phẩm mỗi trang
-  const [totalCount, setTotalCount] = useState(0); // Tổng số sản phẩm
+  const [page, setPage] = useState(initialPage);
+  const [limit, setLimit] = useState(initialLimit);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Include `page` and `limit` in the API request URL
-        const response = await fetch(
-          `http://localhost:5004/api/product?page=${page}&limit=${limit}`
-        );
+        const url = `http://localhost:5004/api/product?page=${page}&limit=${limit}${
+          category ? `&danhMuc=${category}` : ''
+        }`;
+        const response = await fetch(url);
         const result = await response.json();
         const products = result.productDatas || [];
-        setTotalCount(result.totalCount || 0); // Lưu tổng số sản phẩm từ API
+        setTotalCount(result.totalCount || 0);
+        setTotalPages(result.totalPages || 0);
 
-        const formattedData = await Promise.all(
-          products.map(async (watch) => {
-            const allImages = await Promise.all(
-              watch.hinhAnh?.map((imageId) =>
-                fetch(`http://localhost:5004/api/product/getOneAnh/${imageId}`)
-                  .then((res) => res.json())
-                  .then((data) => data.productData?.duLieuAnh || "default-image-url")
-                  .catch(() => "default-image-url")
-              ) || []
-            );
-
-            return {
-              id: watch._id,
-              images: allImages, // Lưu tất cả ảnh
-              image: allImages[0] || "default-image-url", // Ảnh chính
-              name: watch.tenDH,
-              price: watch.giaBan.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }), // Định dạng giá bán
-              category: watch.danhMuc,
-              moTa: watch.moTa,
-            };
-          })
-        );
+        const formattedData = products.map((watch) => ({
+          id: watch._id,
+          images: watch.hinhAnh.map((img) => img.duLieuAnh || 'default-image-url'),
+          image: watch.hinhAnh[0]?.duLieuAnh || 'default-image-url',
+          name: watch.tenDH,
+          price: watch.giaBan,
+          category: watch.danhMuc,
+          moTa: watch.moTa,
+        }));
 
         setWatches(formattedData);
-
       } catch (error) {
-        console.error("Failed to fetch watches:", error);
+        console.error('Lỗi khi lấy đồng hồ:', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [page, limit]); // Gọi lại khi `page` hoặc `limit` thay đổi
+  }, [page, limit, category]);
 
-  return { watches, loading, page, setPage, limit, setLimit, totalCount };
+  return { watches, loading, page, setPage, limit, setLimit, totalCount, totalPages };
 };
 
 export default useWatches;

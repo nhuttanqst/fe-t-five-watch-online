@@ -36,6 +36,7 @@ const PopularWatches = ({ watches, title, mx, px }) => {
                 src={watch.image}
                 alt={watch.name}
                 className="object-cover w-full h-full"
+                loading="lazy"
               />
 
               <button
@@ -57,7 +58,10 @@ const PopularWatches = ({ watches, title, mx, px }) => {
             </p>
 
             <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
-              {watch.price }
+            {watch.price.toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  })}
             </p>
           </div>
         ))}
