@@ -51,7 +51,7 @@ const LoginPage = () => {
       <div className="login-page">
         <div className="container">
           <div className="login-form">
-            <h2 className="font-semibold uppercase text-center text-xl">
+            <h2 className="font-semibold uppercase text-center text-xl select-none">
               Đăng Nhập
             </h2>
             <Divider />
@@ -92,7 +92,14 @@ const LoginPage = () => {
               <div className="flex justify-between items-center">
                 <Form.Item label={null}>
                   <Button
-                    style={{ backgroundColor: "#A51717", color: "#fff" }}
+                    className="login-button"
+                    style={{
+                      backgroundColor: "#A51717",
+                      color: "#fff",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
                     type="default"
                     htmlType="submit"
                     loading={isSubmit}
@@ -112,7 +119,7 @@ const LoginPage = () => {
             </Form>
 
             <Divider>Or</Divider>
-            <p className="question">
+            <p className="question select-none">
               Chưa có tài khoản ? &nbsp;
               <span>
                 <Link className="text-link" to={"/register"}>

@@ -1,10 +1,11 @@
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { Spin } from "antd";
+import { HeartOutlined, HeartFilled, LoadingOutlined } from "@ant-design/icons";
 import { useCurrentApp } from "../../context/app.context";
-
-
+import useWatches from "../../apiservice/apiProduct";
 
 const PopularWatches = ({ watches, title, mx, px }) => {
+  const { loading } = useWatches();
   const { setDataViewDetail, favorite, toggleFavorite } = useCurrentApp();
   const navigate = useNavigate();
 
@@ -36,32 +37,28 @@ const PopularWatches = ({ watches, title, mx, px }) => {
                 src={watch.image}
                 alt={watch.name}
                 className="object-cover w-full h-full"
-                loading="lazy"
               />
 
-              <button
-                className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
-                  isFavorite(watch.id) ? "text-red-500" : "text-gray-500"
-                } hover:text-red-500`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleFavorite(watch);
-                }}
-              >
-                {isFavorite(watch.id) ? <HeartFilled /> : <HeartOutlined />}
-              </button>
-            </div>
+                <button
+                  className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
+                    isFavorite(watch.id) ? "text-red-500" : "text-gray-500"
+                  } hover:text-red-500`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleFavorite(watch);
+                  }}
+                >
+                  {isFavorite(watch.id) ? <HeartFilled /> : <HeartOutlined />}
+                </button>
+              </div>
 
-            <p className="text-gray-700 text-sm mt-2 w-40 truncate transition-all duration-300 group-hover:scale-105">
-              {watch.name}
-            </p>
+              <p className="text-gray-700 text-sm mt-2 w-full px-2 truncate">
+                {watch.name}
+              </p>
 
             <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
-            {watch.price.toLocaleString('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  })}
+              {watch.price }
             </p>
           </div>
         ))}

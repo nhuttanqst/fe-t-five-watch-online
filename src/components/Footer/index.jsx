@@ -89,7 +89,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="text-center text-xs mt-8 border-gray-500 text-[#F1F1F1]">
+      <div className="text-center text-xs mt-8 border-gray-500 text-[#F1F1F1] select-none">
         © All rights reserved - Bản quyền thuộc về T Five Watch
       </div>
     </footer>

@@ -2,15 +2,15 @@ import "@ant-design/v5-patch-for-react-19";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { unstableSetRender } from "antd";
-import AlertProvider from "./components/AlertProvider";
 import Layout from "./components/Layout";
+import PaymentResult from "./components/PaymentResult";
 import HomePage from "./pages/client/Home";
 import MenPage from "./pages/client/Men";
 import WomenPage from "./pages/client/Women";
 import CouplePage from "./pages/client/Couple";
 import ContactPage from "./pages/client/Contact";
 import CartPage from "./pages/client/Cart";
+import ErrorPage from "./pages/client/Error";
 import FavoritePage from "./pages/client/Favorite";
 import ProductDetailPage from "./pages/client/ProductDetail";
 import ForgotPasswordPage from "./pages/client/auth/ForgotPassword";
@@ -72,33 +72,22 @@ const router = createBrowserRouter([
         path: "/update-new-password",
         element: <UpdateNewPassword />,
       },
+      {
+        path: "/payment-result",
+        element: <PaymentResult />,
+      },
     ],
   },
   {
     path: "*",
-    element: <div>404 Not Found</div>,
+    element: <ErrorPage />,
   },
 ]);
 
-const container = document.getElementById("root");
-const reactRoot = createRoot(container);
-
-unstableSetRender((node, container) => {
-  if (!container._reactRoot) {
-    container._reactRoot = createRoot(container);
-  }
-  container._reactRoot.render(node);
-  return () => {
-    container._reactRoot.unmount();
-  };
-});
-
-reactRoot.render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AppProvider>
-      <AlertProvider>
-        <RouterProvider router={router} />
-      </AlertProvider>
+      <RouterProvider router={router} />
     </AppProvider>
   </StrictMode>
 );

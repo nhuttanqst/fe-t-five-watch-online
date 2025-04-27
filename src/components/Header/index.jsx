@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Badge, Dropdown } from "antd";
 import { useCurrentApp } from "../../context/app.context";
@@ -7,12 +8,13 @@ import searchIcon from "../../assets/search.png";
 import cartIcon from "../../assets/cart.png";
 import heartIcon from "../../assets/heart.png";
 import userIcon from "../../assets/user.png";
-import { useEffect, useState } from "react";
 
 const Header = () => {
   const {
     favorite,
     user,
+    carts,
+    setCarts,
     isAuthenticated,
     setIsAppLoading,
     setUser,
@@ -51,7 +53,9 @@ const Header = () => {
       if (response) {
         setUser(null);
         setIsAuthenticated(false);
+        setCarts([]);
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("carts");
         messageApi.success({
           content: "Đăng xuất thành công!",
           duration: 2,
@@ -88,7 +92,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="w-full border-b-2 border-b-[#EDEDED] shadow-sm bg-white">
+    <header className="w-full border-b-2 border-b-[#EDEDED] bg-white">
       <div className="container mx-auto flex flex-col items-center pt-4 pb-1 px-6">
         <div className="w-full flex items-center justify-between py-6">
           <div
@@ -113,22 +117,22 @@ const Header = () => {
             <div className="flex space-x-7 text-gray-600 text-lg mr-[100px]">
               <button
                 onClick={() => navigate("/cart")}
-                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
+                className="flex items-center hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
-                <Badge count={0} size={"small"} showZero>
+                <Badge count={carts.length ?? 0} size={"small"} showZero>
                   <img width="26px" src={cartIcon} alt="Cart Icon" />
                 </Badge>
               </button>
               <button
                 onClick={() => navigate("/favorite")}
-                className="hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
+                className="flex items-center hover:text-red-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80"
               >
                 <Badge count={favorite.length ?? 0} size={"small"} showZero>
                   <img width="26px" src={heartIcon} alt="Heart Icon" />
                 </Badge>
               </button>
               {isAuthenticated ? (
-                <Dropdown menu={{ items }} placement="bottomRight">
+                <Dropdown menu={{ items }} placement="bottom">
                   <div className="flex items-center space-x-2 cursor-pointer hover:text-red-500 transition-all duration-300 hover:opacity-80">
                     <img
                       src={user.avatar || userIcon}

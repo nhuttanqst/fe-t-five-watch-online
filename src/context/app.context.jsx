@@ -43,6 +43,51 @@ export const AppProvider = ({ children }) => {
     fetchAccount();
   }, []);
 
+  useEffect(() => {
+    const carts = localStorage.getItem("carts");
+    if (carts) setCarts(JSON.parse(carts));
+  }, []);
+
+  const addToCart = (product, quantity) => {
+    setCarts((prevCarts) => {
+      const existingItem = prevCarts.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        const newCarts = prevCarts.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+        localStorage.setItem("carts", JSON.stringify(newCarts));
+        return newCarts;
+      } else {
+        localStorage.setItem(
+          "carts",
+          JSON.stringify([...prevCarts, { ...product, quantity }])
+        );
+        return [...prevCarts, { ...product, quantity }];
+      }
+    });
+  };
+
+  const removeFromCart = (productId) => {
+    setCarts((prevCarts) => {
+      const newCarts = prevCarts.filter((item) => item.id !== productId);
+      localStorage.setItem("carts", JSON.stringify(newCarts));
+      return newCarts;
+    });
+  };
+
+  const updateCartItemQuantity = (productId, quantity) => {
+    setCarts((prevCarts) => {
+      const newCarts = prevCarts.map((item) =>
+        item.id === productId ? { ...item, quantity } : item
+      );
+      localStorage.setItem("carts", JSON.stringify(newCarts));
+      return newCarts;
+    });
+  };
+
   const toggleFavorite = (product) => {
     setFavorite((prev) => {
       const isFavorite = prev.some((item) => item.id === product.id);
@@ -60,43 +105,47 @@ export const AppProvider = ({ children }) => {
 
   return (
     <>
-      {isAppLoading === false ? (
-        <CurrentAppContext.Provider
-          value={{
-            isAppLoading,
-            setIsAppLoading,
-            carts,
-            setCarts,
-            dataViewDetail,
-            setDataViewDetail,
-            favorite,
-            setFavorite,
-            toggleFavorite,
-            removeFromFavorite,
-            user,
-            setUser,
-            isAuthenticated,
-            setIsAuthenticated,
-            messageApi,
-            contextHolder,
-            notificationApi,
-            contextNotifiHolder,
-          }}
-        >
-          {children}
-        </CurrentAppContext.Provider>
-      ) : (
-        <div
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
+      {contextHolder}
+      {contextNotifiHolder}
+
+      {isAppLoading ? (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+          <Spin
+            indicator={
+              <LoadingOutlined
+                style={{ fontSize: 48, color: "#A51717" }}
+                spin
+              />
+            }
+          />
         </div>
-      )}
+      ) : null}
+
+      <CurrentAppContext.Provider
+        value={{
+          isAppLoading,
+          setIsAppLoading,
+          carts,
+          setCarts,
+          addToCart,
+          removeFromCart,
+          updateCartItemQuantity,
+          dataViewDetail,
+          setDataViewDetail,
+          favorite,
+          setFavorite,
+          toggleFavorite,
+          removeFromFavorite,
+          user,
+          setUser,
+          isAuthenticated,
+          setIsAuthenticated,
+          messageApi,
+          notificationApi,
+        }}
+      >
+        {!isAppLoading && children}
+      </CurrentAppContext.Provider>
     </>
   );
 };

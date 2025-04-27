@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import ReactImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { Link } from "react-router-dom";
-import { Breadcrumb, Col, Row, message } from "antd";
+import { Breadcrumb, Col, Row } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
-import { watchesWomen, items } from "../../data";
+import { items } from "../../data";
 import "../../styles/product.detail.css";
 
 import useWatches from "../../apiservice/apiProduct";
@@ -15,17 +15,14 @@ const typeMapping = {
   Couple: "Đồng Hồ Cặp",
 };
 
-
 const ProductDetailPage = () => {
- 
-  const { watches, loading } = useWatches();
+  const { watches } = useWatches();
   const [filteredWatches, setFilteredWatches] = useState([]);
   const [type, setType] = useState("");
 
-
-  const { dataViewDetail } = useCurrentApp();
+  const { dataViewDetail, addToCart, messageApi, contextHolder } =
+    useCurrentApp();
   const [images, setImages] = useState([]);
-  const [messageApi, contextHolder] = message.useMessage();
   const [quantity, setQuantity] = useState(1);
 
   const refGallery = useRef(null);
@@ -38,28 +35,27 @@ const ProductDetailPage = () => {
     if (dataViewDetail) {
       const imagesArr =
         dataViewDetail.images?.map((image) => ({
-          original: image, // URL ảnh lớn
-          thumbnail: image, // URL ảnh thumbnail
-          originalClass: "original-image", // Thêm class cho ảnh lớn (nếu cần)
-          thumbnailClass: "thumbnail-image", // Thêm class cho thumbnail (nếu cần)
+          original: image,
+          thumbnail: image,
+          originalClass: "original-image",
+          thumbnailClass: "thumbnail-image",
         })) || [];
-  
+
       setImages(imagesArr);
-  
-      console.log("Data View Detail test:", dataViewDetail);
     }
   }, [dataViewDetail]);
-  
+
   // Lọc sản phẩm tương tự theo category
   useEffect(() => {
     if (dataViewDetail?.category) {
       const similarWatches = watches.filter(
-        (watch) => watch.category === dataViewDetail.category
+        (watch) =>
+          watch.category === dataViewDetail.category &&
+          watch.id !== dataViewDetail.id
       );
       setFilteredWatches(similarWatches);
     }
-  }, [dataViewDetail?.category, watches]);
-
+  }, [dataViewDetail?.category, watches, dataViewDetail?.id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -78,6 +74,16 @@ const ProductDetailPage = () => {
       });
   };
 
+  const handleAddToCart = () => {
+    if (dataViewDetail) {
+      addToCart(dataViewDetail, quantity);
+      messageApi.open({
+        type: "success",
+        content: "Thêm vào giỏ hàng thành công!",
+      });
+    }
+  };
+
   return (
     <>
       {contextHolder}
@@ -87,26 +93,24 @@ const ProductDetailPage = () => {
             <Link to="/">Trang chủ</Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-          <Link to="/">{type}</Link>
+            <Link to="/">{type}</Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>{dataViewDetail.name}</Breadcrumb.Item>
         </Breadcrumb>
-        {/* Xong Breadcrumb */}
-
 
         <Row className="mt-6 mx-20" gutter={[30, 30]}>
-  <Col span={8} className="flex justify-center">
-    <div className="w-3/4"> {/* Điều chỉnh kích thước hình ảnh */}
-      <ReactImageGallery
-        ref={refGallery}
-        items={images}
-        showPlayButton={false}
-        showFullscreenButton={false}
-        showNav={false}
-        slideOnThumbnailOver={true}
-      />
-    </div>
-  </Col>
+          <Col span={8} className="flex justify-center">
+            <div className="w-3/4">
+              <ReactImageGallery
+                ref={refGallery}
+                items={images}
+                showPlayButton={false}
+                showFullscreenButton={false}
+                showNav={false}
+                slideOnThumbnailOver={true}
+              />
+            </div>
+          </Col>
 
   <Col span={16}>
     <h1 className="text-2xl font-bold text-[#676767] text-justify">
@@ -169,6 +173,7 @@ const ProductDetailPage = () => {
   </Col>
 </Row>
 
+           
 
         <div className="grid grid-cols-4 gap-6 mt-15 px-6 border-b border-gray-300 pb-15">
           {items.map((item, index) => (

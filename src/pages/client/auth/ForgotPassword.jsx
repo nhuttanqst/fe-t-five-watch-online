@@ -10,7 +10,9 @@ const ForgotPasswordPage = () => {
       <div className="forgot-page">
         <div className="container">
           <div className="forgot-form">
-            <h2 className="text-center font-semibold text-xl">QUÊN MẬT KHẨU</h2>
+            <h2 className="text-center font-semibold text-xl select-none">
+              QUÊN MẬT KHẨU
+            </h2>
             <Divider />
             <Form form={form} layout="vertical">
               <Form.Item
