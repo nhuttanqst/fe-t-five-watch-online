@@ -74,11 +74,12 @@ const CartPage = () => {
 
   const handleSubmit = async (values) => {
     setIsSubmit(true);
+
     const chiTietDonHang = carts.map((cart) => ({
       sanPhamId: cart.id,
       tenSanPham: cart.name,
       soLuong: cart.quantity,
-      giaBan: parseInt(cart.price.replace(/[^\d]/g, ""), 10),
+      giaBan: cart.price,
     }));
 
     const order = {
