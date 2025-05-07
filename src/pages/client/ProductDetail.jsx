@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import ReactImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { Link } from "react-router-dom";
-import { Breadcrumb, Col, Row } from "antd";
+import { Breadcrumb, Button, Col, Input, Rate, Row, Spin } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
-import "../../styles/product.detail.css";
-
 import useWatches from "../../apiservice/apiProduct";
+import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
+import "../../styles/product.detail.css";
 const typeMapping = {
   Nam: "Đồng Hồ Nam",
   Nữ: "Đồng Hồ Nữ",
@@ -19,11 +19,21 @@ const ProductDetailPage = () => {
   const { watches } = useWatches();
   const [filteredWatches, setFilteredWatches] = useState([]);
   const [type, setType] = useState("");
-
-  const { dataViewDetail, addToCart, messageApi, contextHolder, user } =
-    useCurrentApp();
   const [images, setImages] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [newStar, setNewStar] = useState(0);
+  const [newComment, setNewComment] = useState("");
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const {
+    dataViewDetail,
+    addToCart,
+    messageApi,
+    contextHolder,
+    user,
+    isAuthenticated,
+  } = useCurrentApp();
 
   const refGallery = useRef(null);
 
@@ -91,6 +101,43 @@ const ProductDetailPage = () => {
       });
     }
   };
+
+  const handleAddReview = async () => {
+    if (!newStar) {
+      messageApi.open({ type: "error", content: "Vui lòng cho số sao." });
+      return;
+    }
+    setSubmitLoading(true);
+    try {
+      await addReviewApi({
+        product: dataViewDetail.id,
+        star: newStar,
+        comment: newComment,
+      });
+      messageApi.open({ type: "success", content: "Đã gửi đánh giá." });
+      setNewStar(0);
+      setNewComment("");
+      setReviewLoading(true);
+      const res = await fetchReviewsByProduct(dataViewDetail.id);
+      if (res.success) setReviews(res.data);
+    } catch (error) {
+      console.error(error);
+      messageApi.open({ type: "error", content: "Gửi đánh giá thất bại." });
+    } finally {
+      setReviewLoading(false);
+      setSubmitLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (dataViewDetail?.id) {
+      setReviewLoading(true);
+      fetchReviewsByProduct(dataViewDetail.id)
+        .then((res) => res.success && setReviews(res.data))
+        .catch((err) => console.error(err))
+        .finally(() => setReviewLoading(false));
+    }
+  }, [dataViewDetail?.id]);
 
   return (
     <>
@@ -194,6 +241,63 @@ const ProductDetailPage = () => {
           mx
           px
         />
+
+        <div className="mt-10 px-12">
+          <h2 className="text-xl font-bold mb-4">Đánh giá sản phẩm</h2>
+          {isAuthenticated ? (
+            <div className="mb-6">
+              <Rate value={newStar} onChange={setNewStar} />
+              <Input.TextArea
+                rows={4}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Viết nhận xét..."
+                className="mt-2"
+              />
+              <Button
+                type="primary"
+                onClick={handleAddReview}
+                loading={submitLoading}
+                className="mt-2"
+              >
+                Gửi đánh giá
+              </Button>
+            </div>
+          ) : (
+            <p>
+              Vui lòng{" "}
+              <Link to="/login" className="text-blue-500">
+                đăng nhập
+              </Link>{" "}
+              để đánh giá
+            </p>
+          )}
+          {reviewLoading ? (
+            <Spin />
+          ) : reviews.length > 0 ? (
+            reviews.map((review) => (
+              <div key={review._id} className="mb-4 border-b pb-4">
+                <div className="flex items-center">
+                  <img
+                    src={review.user.avatar || ""}
+                    alt={review.user.tenNguoiDung}
+                    className="w-8 h-8 rounded-full mr-2"
+                  />
+                  <Rate value={review.star} disabled />
+                  <span className="ml-2 text-gray-600">
+                    {review.user.tenNguoiDung}
+                  </span>
+                </div>
+                <p className="mt-2">{review.comment}</p>
+                <span className="text-xs text-gray-400">
+                  {new Date(review.createdAt).toLocaleString()}
+                </span>
+              </div>
+            ))
+          ) : (
+            <p>Chưa có đánh giá nào</p>
+          )}
+        </div>
       </div>
     </>
   );

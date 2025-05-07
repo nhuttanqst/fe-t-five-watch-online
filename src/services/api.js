@@ -2,6 +2,9 @@ import createInstanceAxios from "./axios.customize";
 
 const axiosUser = createInstanceAxios(import.meta.env.VITE_BACKEND_USER_URL);
 const axiosOrder = createInstanceAxios(import.meta.env.VITE_BACKEND_ORDER_URL);
+const axiosReview = createInstanceAxios(
+  import.meta.env.VITE_BACKEND_REVIEW_URL
+);
 
 export const registerApi = (data) => {
   return axiosUser.post("/api/auth/register", data);
@@ -45,4 +48,12 @@ export const createOrderApi = (data) => {
 
 export const getOrdersApi = (page = 1, limit = 10) => {
   return axiosOrder.get(`/api/orders?page=${page}&limit=${limit}`);
+};
+
+export const fetchReviewsByProduct = (productId) => {
+  return axiosReview.get(`/api/reviews/product/${productId}`);
+};
+
+export const addReviewApi = (data) => {
+  return axiosReview.post("/api/reviews/add", data);
 };
