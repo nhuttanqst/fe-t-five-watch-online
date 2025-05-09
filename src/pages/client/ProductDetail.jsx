@@ -265,9 +265,9 @@ const ProductDetailPage = () => {
               </Button>
             </div>
           ) : (
-            <p>
+            <p className="mb-4 select-none">
               Vui lòng{" "}
-              <Link to="/login" className="text-blue-500">
+              <Link to="/login" className="text-[#A51717]">
                 đăng nhập
               </Link>{" "}
               để đánh giá
@@ -298,7 +298,7 @@ const ProductDetailPage = () => {
               </div>
             ))
           ) : (
-            <p>Chưa có đánh giá nào</p>
+            <p className="select-none">Sản phẩm chưa có đánh giá nào</p>
           )}
         </div>
       </div>
