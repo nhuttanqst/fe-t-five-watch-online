@@ -278,16 +278,18 @@ const ProductDetailPage = () => {
           ) : reviews.length > 0 ? (
             reviews.map((review) => (
               <div key={review._id} className="mb-4 border-b pb-4">
-                <div className="flex items-center">
-                  <img
-                    src={review.user.avatar || ""}
-                    alt={review.user.tenNguoiDung}
-                    className="w-8 h-8 rounded-full mr-2"
-                  />
+                <div className="flex flex-col">
+                  <div className="flex items-center mb-2">
+                    <img
+                      src={review.user.avatar || ""}
+                      alt={review.user.tenNguoiDung}
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                    <span className="mr-2 text-gray-600">
+                      {review.user.tenNguoiDung}
+                    </span>
+                  </div>
                   <Rate value={review.star} disabled />
-                  <span className="ml-2 text-gray-600">
-                    {review.user.tenNguoiDung}
-                  </span>
                 </div>
                 <p className="mt-2">{review.comment}</p>
                 <span className="text-xs text-gray-400">
