@@ -6,9 +6,10 @@ import { Breadcrumb, Button, Col, Input, Rate, Row, Spin } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
-import useWatches from "../../apiservice/apiProduct";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
+import useWatches from "../../apiservice/apiProduct";
 import "../../styles/product.detail.css";
+
 const typeMapping = {
   Nam: "Đồng Hồ Nam",
   Nữ: "Đồng Hồ Nữ",
