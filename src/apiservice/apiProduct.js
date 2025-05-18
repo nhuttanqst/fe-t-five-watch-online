@@ -4,59 +4,48 @@ import axios from 'axios';
 const API_URL = 'http://localhost:5004/api/product';
 
 // Lấy danh sách sản phẩm
-export const getProducts = async (page = 1, limit = 10, category = '') => {
-  const response = await axios.get(API_URL, {
-    params: { page, limit, danhMuc: category },
-  });
-  return response.data;
+export const getProducts = async (page = 1, limit = 10) => { // Loại bỏ tham số category
+  try {
+    const response = await axios.get(API_URL, {
+      params: { page, limit }, // Chỉ giữ page và limit
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // Lấy một sản phẩm
 export const getProduct = async (id) => {
-  const response = await axios.get(`${API_URL}/${id}`);
+  const response = await axios.get(`${API_URL}/getone/${id}`);
   return response.data;
 };
 
-// Tạo sản phẩm
-export const createProduct = async (productData) => {
-  const formData = new FormData();
-  for (const key in productData) {
-    if (key === 'hinhAnh' && productData[key]) {
-      productData[key].forEach((file, index) => {
-        formData.append(`hinhAnh[${index}]`, file);
-      });
-    } else {
-      formData.append(key, productData[key]);
-    }
-  }
-  const response = await axios.post(API_URL, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return response.data;
-};
-
-// Cập nhật sản phẩm
-export const updateProduct = async (id, productData) => {
-  const formData = new FormData();
-  for (const key in productData) {
-    if (key === 'hinhAnhMoi' && productData[key]) {
-      productData[key].forEach((file, index) => {
-        formData.append(`hinhAnhMoi[${index}]`, file);
-      });
-    } else if (key === 'hinhAnhXoa' && productData[key]) {
-      formData.append('hinhAnhXoa', JSON.stringify(productData[key]));
-    } else {
-      formData.append(key, productData[key]);
-    }
-  }
-  const response = await axios.put(`${API_URL}/${id}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return response.data;
-};
-
-// Xóa sản phẩm
 export const deleteProduct = async (id) => {
-  const response = await axios.delete(`${API_URL}/${id}`);
+  const response = await axios.delete(`${API_URL}/delete/${id}`);
   return response.data;
+};
+
+
+// Hàm để tạo sản phẩm mới
+export const createProduct = async (formData) => {
+  return axios.post("http://localhost:5004/api/product/add", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// Hàm để cập nhật sản phẩm
+export const updateProduct = async (id, formData) => {
+  try {
+    const response = await axios.put(`${API_URL}/update/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };

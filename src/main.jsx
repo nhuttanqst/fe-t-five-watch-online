@@ -21,7 +21,8 @@ import RegisterPage from "./pages/client/auth/Register";
 import { AppProvider } from "./context/app.context";
 import ManageBrand from "./pages/admin/manageBrand";
 import ManageProduct from "./pages/admin/manageProduct";
-
+import FormAddProduct from "./pages/admin/formAddProduct";
+import FormUpdate from "./pages/admin/FormUpdate";
 
 const router = createBrowserRouter([
   {
@@ -92,6 +93,15 @@ const router = createBrowserRouter([
         path: "/admin2",
         element: <ManageProduct />,
       },
+      {
+        path: "/admin2/add",
+        element: <FormAddProduct/>,
+      },
+      {
+        path: "/admin2/edit/:id",
+        element: <FormUpdate/>,
+      },
+
       
     ],
   },
