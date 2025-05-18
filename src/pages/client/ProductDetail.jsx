@@ -6,7 +6,7 @@ import { Breadcrumb, Button, Col, Input, Rate, Row, Spin } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
-import useWatches from "../../apiservice/apiProduct";
+import useWatches from "../../apiservice/useWathes";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
 import "../../styles/product.detail.css";
 const typeMapping = {
@@ -56,16 +56,21 @@ const ProductDetailPage = () => {
   }, [dataViewDetail]);
 
   // Lọc sản phẩm tương tự theo category
-  useEffect(() => {
-    if (dataViewDetail?.category) {
-      const similarWatches = watches.filter(
-        (watch) =>
-          watch.category === dataViewDetail.category &&
-          watch.id !== dataViewDetail.id
-      );
-      setFilteredWatches(similarWatches);
-    }
-  }, [dataViewDetail?.category, watches, dataViewDetail?.id]);
+ useEffect(() => {
+  if (dataViewDetail?.category && Array.isArray(watches)) {
+    const similarWatches = watches.filter(
+      (watch) =>
+        watch.category === dataViewDetail.category &&
+        watch.id !== dataViewDetail.id
+    );
+    setFilteredWatches(similarWatches);
+  } else {
+    setFilteredWatches([]);
+  }
+}, [dataViewDetail?.category, watches, dataViewDetail?.id]);
+
+
+
 
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import PopularWatches from '../../components/PopularWatches';
 import icon from '../../assets/icon-filter.png';
 import banner from '../../assets/banner_Couple.png';
-import useWatches from '../../apiservice/apiProduct';
+
+import useWatchesData from '../../apiservice/useWathes';
 
 const SkeletonLoader = () => (
   <div className="grid gap-6 mx-20 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
@@ -18,7 +19,8 @@ const SkeletonLoader = () => (
 );
 
 const CouplePage = () => {
-  const { watches, loading, page, setPage, totalPages } = useWatches(1, 4, 'Couple');
+  const { data, loading, page, setPage, totalPages } = useWatchesData(1, 4);
+  const couleWatches = data.couple;
 
   if (loading) {
     return (
@@ -55,8 +57,8 @@ const CouplePage = () => {
           <img src={icon} alt="Bộ lọc" className="w-6 h-6 mr-2" />
           <span className="text-gray-700 font-medium">Bộ lọc</span>
         </div>
-        <PopularWatches watches={watches} title="" />
-        <div className="flex justify-center items-center mt-8">
+        <PopularWatches watches={couleWatches} title="" />
+       <div className="flex justify-center items-center mt-8">
           <button
             onClick={() => setPage(page - 1)}
             disabled={page === 1}
@@ -65,11 +67,11 @@ const CouplePage = () => {
             Trang trước
           </button>
           <span className="text-gray-700">
-            Trang {page} / {totalPages}
+            Trang {page} / {totalPages?.male}
           </span>
           <button
             onClick={() => setPage(page + 1)}
-            disabled={page === totalPages}
+            disabled={page === totalPages?.male}
             className="px-4 py-2 mx-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
           >
             Trang sau

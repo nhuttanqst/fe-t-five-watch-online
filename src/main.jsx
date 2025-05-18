@@ -19,6 +19,9 @@ import UpdateNewPassword from "./pages/client/auth/UpdateNewPassword";
 import LoginPage from "./pages/client/auth/Login";
 import RegisterPage from "./pages/client/auth/Register";
 import { AppProvider } from "./context/app.context";
+import ManageBrand from "./pages/admin/manageBrand";
+import ManageProduct from "./pages/admin/manageProduct";
+
 
 const router = createBrowserRouter([
   {
@@ -81,6 +84,15 @@ const router = createBrowserRouter([
         path: "/history",
         element: <HistoryPage />,
       },
+      {
+        path: "/admin1",
+        element: <ManageBrand />,
+      },
+      {
+        path: "/admin2",
+        element: <ManageProduct />,
+      },
+      
     ],
   },
   {
