@@ -91,7 +91,7 @@ const FormUpdate = () => {
 
       setSuccess("Cập nhật sản phẩm thành công!");
       setError(null);
-      navigate("/admin2");
+      navigate("/admin");
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       setError(error.response?.data?.message || "Lỗi khi cập nhật sản phẩm.");
@@ -208,7 +208,7 @@ const FormUpdate = () => {
             </button>
 
             <button
-              onClick={() => navigate("/admin2")}
+              onClick={() => navigate("/admin")}
               className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               Quay lại

@@ -60,7 +60,7 @@ const FormAddProduct = () => {
     try {
       await createProduct(formData);
       setSuccess("Thêm sản phẩm thành công!");
-       navigate("/admin2")
+      
       setError(null);
 
       // Reset form
@@ -71,6 +71,7 @@ const FormAddProduct = () => {
       setQuantity("");
       setBrandId("");
       setImages([]);
+      alert("Thêm Mới Thành Công!")
     } catch (err) {
       console.error("Error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Lỗi khi thêm sản phẩm. Vui lòng thử lại.");
@@ -180,7 +181,7 @@ const FormAddProduct = () => {
             </button>
 
              <button
-              onClick={() => navigate("/admin2")}
+              onClick={() => navigate("/admin")}
               className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               Quay lại
