@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Divider, Form, Input } from "antd";
+import { Button, Divider, Form, Input, Select } from "antd";
 import { useCurrentApp } from "../../../context/app.context";
 import { registerApi } from "../../../services/api";
 import "./Register.css";
@@ -15,13 +15,13 @@ const RegisterPage = () => {
 
   const onFinish = async (values) => {
     setIsSubmit(true);
-    const { fullName, email, password, phone } = values;
+    const { fullName, email, password, phone, gender } = values;
     const res = await registerApi({
       tenNguoiDung: fullName.trim(),
       matKhau: password,
       email,
       sdt: phone,
-      gioiTinh: "Nam",
+      gioiTinh: gender,
     });
 
     if (res.data) {
@@ -101,6 +101,20 @@ const RegisterPage = () => {
                     }
                   }}
                 />
+              </Form.Item>
+
+              <Form.Item
+                label="Giới tính"
+                name="gender"
+                rules={[
+                  { required: true, message: "Vui lòng chọn giới tính!" },
+                ]}
+              >
+                <Select placeholder="Chọn giới tính">
+                  <Select.Option value="Nam">Nam</Select.Option>
+                  <Select.Option value="Nữ">Nữ</Select.Option>
+                  <Select.Option value="Khác">Khác</Select.Option>
+                </Select>
               </Form.Item>
 
               <Form.Item

@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import ReactImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/css/image-gallery.css";
 import { Link } from "react-router-dom";
 import { Breadcrumb, Button, Col, Input, Rate, Row, Spin } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
-import useWatches from "../../apiservice/useWathes";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
+import useWatches from "../../apiservice/apiProduct";
+import "react-image-gallery/styles/css/image-gallery.css";
 import "../../styles/product.detail.css";
+
 const typeMapping = {
   Nam: "Đồng Hồ Nam",
   Nữ: "Đồng Hồ Nữ",
@@ -56,21 +57,16 @@ const ProductDetailPage = () => {
   }, [dataViewDetail]);
 
   // Lọc sản phẩm tương tự theo category
- useEffect(() => {
-  if (dataViewDetail?.category && Array.isArray(watches)) {
-    const similarWatches = watches.filter(
-      (watch) =>
-        watch.category === dataViewDetail.category &&
-        watch.id !== dataViewDetail.id
-    );
-    setFilteredWatches(similarWatches);
-  } else {
-    setFilteredWatches([]);
-  }
-}, [dataViewDetail?.category, watches, dataViewDetail?.id]);
-
-
-
+  useEffect(() => {
+    if (dataViewDetail?.category) {
+      const similarWatches = watches.filter(
+        (watch) =>
+          watch.category === dataViewDetail.category &&
+          watch.id !== dataViewDetail.id
+      );
+      setFilteredWatches(similarWatches);
+    }
+  }, [dataViewDetail?.category, watches, dataViewDetail?.id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -269,9 +265,9 @@ const ProductDetailPage = () => {
               </Button>
             </div>
           ) : (
-            <p>
+            <p className="mb-4 select-none">
               Vui lòng{" "}
-              <Link to="/login" className="text-blue-500">
+              <Link to="/login" className="text-[#A51717]">
                 đăng nhập
               </Link>{" "}
               để đánh giá
@@ -282,16 +278,18 @@ const ProductDetailPage = () => {
           ) : reviews.length > 0 ? (
             reviews.map((review) => (
               <div key={review._id} className="mb-4 border-b pb-4">
-                <div className="flex items-center">
-                  <img
-                    src={review.user.avatar || ""}
-                    alt={review.user.tenNguoiDung}
-                    className="w-8 h-8 rounded-full mr-2"
-                  />
+                <div className="flex flex-col">
+                  <div className="flex items-center mb-2">
+                    <img
+                      src={review.user.avatar || ""}
+                      alt={review.user.tenNguoiDung}
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                    <span className="mr-2 text-gray-600">
+                      {review.user.tenNguoiDung}
+                    </span>
+                  </div>
                   <Rate value={review.star} disabled />
-                  <span className="ml-2 text-gray-600">
-                    {review.user.tenNguoiDung}
-                  </span>
                 </div>
                 <p className="mt-2">{review.comment}</p>
                 <span className="text-xs text-gray-400">
@@ -300,7 +298,7 @@ const ProductDetailPage = () => {
               </div>
             ))
           ) : (
-            <p>Chưa có đánh giá nào</p>
+            <p className="select-none">Sản phẩm chưa có đánh giá nào</p>
           )}
         </div>
       </div>
