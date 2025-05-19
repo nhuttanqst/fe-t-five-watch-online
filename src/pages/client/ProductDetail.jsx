@@ -6,7 +6,7 @@ import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
-import useWatches from "../../apiservice/apiProduct";
+import useWatchesData from "../../apiservice/useWathes";
 import "react-image-gallery/styles/css/image-gallery.css";
 import "../../styles/product.detail.css";
 
@@ -17,7 +17,7 @@ const typeMapping = {
 };
 
 const ProductDetailPage = () => {
-  const { watches } = useWatches();
+  const { data, loading } = useWatchesData();
   const [filteredWatches, setFilteredWatches] = useState([]);
   const [type, setType] = useState("");
   const [images, setImages] = useState([]);
@@ -58,15 +58,16 @@ const ProductDetailPage = () => {
 
   // Lọc sản phẩm tương tự theo category
   useEffect(() => {
-    if (dataViewDetail?.category) {
-      const similarWatches = watches.filter(
+    if (dataViewDetail?.category && !loading && data) {
+      const allWatches = [...data.male, ...data.female, ...data.couple];
+      const similarWatches = allWatches.filter(
         (watch) =>
           watch.category === dataViewDetail.category &&
           watch.id !== dataViewDetail.id
       );
       setFilteredWatches(similarWatches);
     }
-  }, [dataViewDetail?.category, watches, dataViewDetail?.id]);
+  }, [dataViewDetail?.category, data, loading, dataViewDetail?.id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
