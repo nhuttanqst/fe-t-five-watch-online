@@ -99,7 +99,7 @@ const Dashboard = () => {
   };
 
   const handleEdit = (product) => {
-    navigate(`/admin2/edit/${product._id}`);
+    navigate(`/admin/edit/${product._id}`);
   };
 
   const handleDelete = async (productId) => {
