@@ -105,7 +105,7 @@ const ProductDetailPage = () => {
 
   const handleAddReview = async () => {
     if (!newStar) {
-      messageApi.open({ type: "error", content: "Vui lòng cho số sao." });
+      messageApi.open({ type: "error", content: "Vui lòng chọn số sao!" });
       return;
     }
     setSubmitLoading(true);
@@ -285,7 +285,7 @@ const ProductDetailPage = () => {
                       alt={review.user.tenNguoiDung}
                       className="w-8 h-8 rounded-full mr-2"
                     />
-                    <span className="mr-2 text-gray-600">
+                    <span className="mr-2 text-gray-600 select-none">
                       {review.user.tenNguoiDung}
                     </span>
                   </div>
