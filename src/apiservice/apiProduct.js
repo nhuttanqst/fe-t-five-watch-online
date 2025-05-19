@@ -1,48 +1,51 @@
-import { useEffect, useState } from 'react';
+// src/apiservice/apiProduct.js
+import axios from 'axios';
 
-const useWatches = (initialPage = 1, initialLimit = 10, category = '') => {
-  const [watches, setWatches] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(initialPage);
-  const [limit, setLimit] = useState(initialLimit);
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+const API_URL = 'http://localhost:5004/api/product';
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const url = `http://localhost:5004/api/product?page=${page}&limit=${limit}${
-          category ? `&danhMuc=${category}` : ''
-        }`;
-        const response = await fetch(url);
-        const result = await response.json();
-        const products = result.productDatas || [];
-        setTotalCount(result.totalCount || 0);
-        setTotalPages(result.totalPages || 0);
-
-        const formattedData = products.map((watch) => ({
-          id: watch._id,
-          images: watch.hinhAnh.map((img) => img.duLieuAnh || 'default-image-url'),
-          image: watch.hinhAnh[0]?.duLieuAnh || 'default-image-url',
-          name: watch.tenDH,
-          price: watch.giaBan,
-          category: watch.danhMuc,
-          moTa: watch.moTa,
-        }));
-
-        setWatches(formattedData);
-      } catch (error) {
-        console.error('Lỗi khi lấy đồng hồ:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [page, limit, category]);
-
-  return { watches, loading, page, setPage, limit, setLimit, totalCount, totalPages };
+// Lấy danh sách sản phẩm
+export const getProducts = async (page = 1, limit = 10) => { // Loại bỏ tham số category
+  try {
+    const response = await axios.get(API_URL, {
+      params: { page, limit }, // Chỉ giữ page và limit
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export default useWatches;
+// Lấy một sản phẩm
+export const getProduct = async (id) => {
+  const response = await axios.get(`${API_URL}/getone/${id}`);
+  return response.data;
+};
+
+export const deleteProduct = async (id) => {
+  const response = await axios.delete(`${API_URL}/delete/${id}`);
+  return response.data;
+};
+
+
+// Hàm để tạo sản phẩm mới
+export const createProduct = async (formData) => {
+  return axios.post("http://localhost:5004/api/product/add", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// Hàm để cập nhật sản phẩm
+export const updateProduct = async (id, formData) => {
+  try {
+    const response = await axios.put(`${API_URL}/update/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

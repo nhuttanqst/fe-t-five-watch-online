@@ -1,11 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Spin } from "antd";
-import { HeartOutlined, HeartFilled, LoadingOutlined } from "@ant-design/icons";
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useCurrentApp } from "../../context/app.context";
-import useWatches from "../../apiservice/apiProduct";
 
 const PopularWatches = ({ watches, title, mx, px }) => {
-  const { loading } = useWatches();
   const { setDataViewDetail, favorite, toggleFavorite } = useCurrentApp();
   const navigate = useNavigate();
 
@@ -24,70 +21,52 @@ const PopularWatches = ({ watches, title, mx, px }) => {
         {title}
       </h2>
 
-
-      {loading ? (
-        <div className="flex items-center justify-center">
-          <Spin
-            indicator={
-              <LoadingOutlined
-                style={{ fontSize: 48, color: "#A51717" }}
-                spin
-
+      <div
+        className={`grid gap-6 ${
+          mx ? "mx-0" : "mx-20"
+        } grid-cols-2 sm:grid-cols-3 md:grid-cols-4 overflow-hidden`}
+      >
+        {watches.map((watch) => (
+          <div
+            key={watch.id}
+            className="group flex flex-col items-center text-center cursor-pointer transition-transform duration-300 hover:scale-105"
+            onClick={() => handleViewDetail(watch)}
+          >
+            <div className="relative w-48 h-48 flex items-center justify-center">
+              <img
+                src={watch.image}
+                alt={watch.name}
+                className="object-cover w-full h-full"
+                loading="lazy"
               />
-            }
-          />
-        </div>
-      ) : (
-        <div
-          className={`grid gap-6 ${
-            mx ? "mx-0" : "mx-20"
-          } grid-cols-2 sm:grid-cols-3 md:grid-cols-4 overflow-hidden`}
-        >
-          {watches.map((watch) => (
-            <div
-              key={watch.id}
-              className="group flex flex-col items-center text-center cursor-pointer transition-transform duration-300 hover:scale-105"
-              onClick={() => handleViewDetail(watch)}
-            >
-              <div className="relative w-48 h-48 flex items-center justify-center">
-                <img
-                  src={watch.image}
-                  alt={watch.name}
-                  className="object-cover w-full h-full"
-                   loading="lazy"
-                />
 
-                <button
-                  className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
-                    isFavorite(watch.id) ? "text-red-500" : "text-gray-500"
-                  } hover:text-red-500`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleFavorite(watch);
-                  }}
-                >
-                  {isFavorite(watch.id) ? <HeartFilled /> : <HeartOutlined />}
-                </button>
-              </div>
-
-             
-
+              <button
+                className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
+                  isFavorite(watch.id) ? "text-red-500" : "text-gray-500"
+                } hover:text-red-500`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFavorite(watch);
+                }}
+              >
+                {isFavorite(watch.id) ? <HeartFilled /> : <HeartOutlined />}
+              </button>
+            </div>
 
             <p className="text-gray-700 text-sm mt-2 w-40 truncate transition-all duration-300 group-hover:scale-105">
               {watch.name}
             </p>
 
             <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
-            {watch.price.toLocaleString('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  })}
+              {watch.price.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
             </p>
           </div>
         ))}
       </div>
-      )}
     </div>
   );
 };

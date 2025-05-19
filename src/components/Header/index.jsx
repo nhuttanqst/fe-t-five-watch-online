@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Badge, Dropdown } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import { logoutApi } from "../../services/api";
+import { getBrands } from "../../apiservice/apiBrand"; // Import API
 import logo from "../../assets/loggo.png";
 import searchIcon from "../../assets/search.png";
 import cartIcon from "../../assets/cart.png";
@@ -23,6 +24,26 @@ const Header = () => {
   } = useCurrentApp();
   const navigate = useNavigate();
   const [logoutStatus, setLogoutStatus] = useState({ type: "", message: "" });
+  const [visibleBrands, setVisibleBrands] = useState([]); // State cho thương hiệu
+  const [error, setError] = useState(null);
+
+  // Lấy danh sách thương hiệu có isVisible: true
+  useEffect(() => {
+    const fetchVisibleBrands = async () => {
+      try {
+        const response = await getBrands({ isVisible: true });
+        setVisibleBrands(response.brands || []);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        messageApi.error({
+          content: "Lỗi khi lấy danh sách thương hiệu!",
+          duration: 2,
+        });
+      }
+    };
+    fetchVisibleBrands();
+  }, [messageApi]);
 
   useEffect(() => {
     if (logoutStatus.type && logoutStatus.message) {
@@ -33,18 +54,6 @@ const Header = () => {
       setLogoutStatus({ type: "", message: "" });
     }
   }, [logoutStatus, messageApi]);
-
-  const brands = [
-    { id: 1, name: "Rolex", category: "men" },
-    { id: 2, name: "Omega", category: "men" },
-    { id: 3, name: "Tag Heuer", category: "men" },
-    { id: 4, name: "Chanel", category: "women" },
-    { id: 5, name: "Cartier", category: "women" },
-    { id: 6, name: "Gucci", category: "women" },
-    { id: 7, name: "Tissot", category: "couple" },
-    { id: 8, name: "Seiko", category: "couple" },
-    { id: 9, name: "Casio", category: "couple" },
-  ];
 
   const handleLogout = async () => {
     try {
@@ -99,7 +108,7 @@ const Header = () => {
             onClick={() => navigate("/")}
             className="absolute left-1/2 transform -translate-x-1/2 cursor-pointer"
           >
-            <img src={logo} alt="T-Five Watch" className="h-50 " />
+            <img src={logo} alt="T-Five Watch" className="h-50" />
           </div>
 
           <div className="flex items-center space-x-6 ml-auto">
@@ -168,8 +177,7 @@ const Header = () => {
             TRANG CHỦ
           </NavLink>
 
-          {/* Dropdown for Nam */}
-
+          {/* Dropdown cho Nam */}
           <div className="relative group">
             <NavLink
               to="/men"
@@ -184,27 +192,27 @@ const Header = () => {
             <div className="absolute left-0 top-8 hidden group-hover:block bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 z-10">
               <ul className="py-2 text-sm text-gray-700">
                 <li className="px-4 py-2 font-bold text-gray-900">
-                  Thương Hiệu{" "}
+                  Thương Hiệu
                 </li>
-                {brands
-                  .filter((brand) => brand.category === "men")
-                  .map((brand) => (
-                    <li key={brand.id}>
+                {visibleBrands.length === 0 ? (
+                  <li className="px-4 py-2">Không có thương hiệu</li>
+                ) : (
+                  visibleBrands.map((brand) => (
+                    <li key={brand._id}>
                       <NavLink
-                        to={`/men/${brand.name
-                          .toLowerCase()
-                          .replace(" ", "-")}`}
+                        to={`/men/${brand.ten.toLowerCase().replace(" ", "-")}`}
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
-                        {brand.name}
+                        {brand.ten}
                       </NavLink>
                     </li>
-                  ))}
+                  ))
+                )}
               </ul>
             </div>
           </div>
 
-          {/* Dropdown for Nữ */}
+          {/* Dropdown cho Nữ */}
           <div className="relative group">
             <NavLink
               to="/women"
@@ -219,28 +227,28 @@ const Header = () => {
             <div className="absolute left-0 top-8 hidden group-hover:block bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 z-10">
               <ul className="py-2 text-sm text-gray-700">
                 <li className="px-4 py-2 font-bold text-gray-900">
-                  Thương Hiệu{" "}
+                  Thương Hiệu
                 </li>
-                {brands
-                  .filter((brand) => brand.category === "women")
-                  .map((brand) => (
-                    <li key={brand.id}>
+                {visibleBrands.length === 0 ? (
+                  <li className="px-4 py-2">Không có thương hiệu</li>
+                ) : (
+                  visibleBrands.map((brand) => (
+                    <li key={brand._id}>
                       <NavLink
-                        to={`/men/${brand.name
-                          .toLowerCase()
-                          .replace(" ", "-")}`}
+                        to={`/women/${brand.ten.toLowerCase().replace(" ", "-")}`}
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
-                        {brand.name}
+                        {brand.ten}
                       </NavLink>
                     </li>
-                  ))}
+                  ))
+                )}
               </ul>
             </div>
           </div>
 
-          {/* Dropdown for Couple */}
-          <div className="relative group">
+          {/* Dropdown cho Cặp Đôi */}
+          <div recyclclassName="relative group">
             <NavLink
               to="/couple"
               className={({ isActive }) =>
@@ -254,22 +262,22 @@ const Header = () => {
             <div className="absolute left-0 top-8 hidden group-hover:block bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 z-10">
               <ul className="py-2 text-sm text-gray-700">
                 <li className="px-4 py-2 font-bold text-gray-900">
-                  Thương Hiệu{" "}
+                  Thương Hiệu
                 </li>
-                {brands
-                  .filter((brand) => brand.category === "couple")
-                  .map((brand) => (
-                    <li key={brand.id}>
+                {visibleBrands.length === 0 ? (
+                  <li className="px-4 py-2">Không có thương hiệu</li>
+                ) : (
+                  visibleBrands.map((brand) => (
+                    <li key={brand._id}>
                       <NavLink
-                        to={`/men/${brand.name
-                          .toLowerCase()
-                          .replace(" ", "-")}`}
+                        to={`/couple/${brand.ten.toLowerCase().replace(" ", "-")}`}
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
-                        {brand.name}
+                        {brand.ten}
                       </NavLink>
                     </li>
-                  ))}
+                  ))
+                )}
               </ul>
             </div>
           </div>

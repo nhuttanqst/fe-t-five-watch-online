@@ -19,7 +19,9 @@ import UpdateNewPassword from "./pages/client/auth/UpdateNewPassword";
 import LoginPage from "./pages/client/auth/Login";
 import RegisterPage from "./pages/client/auth/Register";
 import { AppProvider } from "./context/app.context";
-
+import FormAddProduct from "./pages/admin/formAddProduct";
+import FormUpdate from "./pages/admin/FormUpdate";
+import Dashboard from "./pages/admin/DashBoard"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -81,8 +83,26 @@ const router = createBrowserRouter([
         path: "/history",
         element: <HistoryPage />,
       },
+      
+
+      
     ],
   },
+// Route riêng cho các trang admin, không sử dụng Layout
+  {
+    path: "/admin",
+    element: <Dashboard />,
+  },
+  
+  {
+    path: "/admin2/add",
+    element: <FormAddProduct />,
+  },
+  {
+    path: "/admin2/edit/:id",
+    element: <FormUpdate />,
+  },
+
   {
     path: "*",
     element: <ErrorPage />,
