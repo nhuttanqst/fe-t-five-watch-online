@@ -10,7 +10,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import TFiveLogo from "../../assets/loggo.png";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct } from "../../apiservice/apiProduct";
@@ -185,7 +185,7 @@ const Dashboard = () => {
       )
     : [];
 
-  const handleToggleVisibility = async (brandId, isVisible) => {
+  const handleToggleVisibility = async (brandId) => {
     try {
       const response = await toggleBrandVisibility(brandId);
       setBrands(
