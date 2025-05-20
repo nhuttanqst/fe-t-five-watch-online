@@ -14,6 +14,7 @@ import ErrorPage from "./pages/client/Error";
 import FavoritePage from "./pages/client/Favorite";
 import ProductDetailPage from "./pages/client/ProductDetail";
 import HistoryPage from "./pages/client/History";
+import ProfilePage from "./pages/client/Profile";
 import ForgotPasswordPage from "./pages/client/auth/ForgotPassword";
 import UpdateNewPassword from "./pages/client/auth/UpdateNewPassword";
 import LoginPage from "./pages/client/auth/Login";
@@ -21,7 +22,7 @@ import RegisterPage from "./pages/client/auth/Register";
 import { AppProvider } from "./context/app.context";
 import FormAddProduct from "./pages/admin/formAddProduct";
 import FormUpdate from "./pages/admin/FormUpdate";
-import Dashboard from "./pages/admin/DashBoard"
+import Dashboard from "./pages/admin/DashBoard";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -83,23 +84,23 @@ const router = createBrowserRouter([
         path: "/history",
         element: <HistoryPage />,
       },
-      
-
-      
+      {
+        path: "/profile",
+        element: <ProfilePage />,
+      },
     ],
   },
-// Route riêng cho các trang admin, không sử dụng Layout
   {
     path: "/admin",
     element: <Dashboard />,
   },
-  
+
   {
-    path: "/admin2/add",
+    path: "/admin/add",
     element: <FormAddProduct />,
   },
   {
-    path: "/admin2/edit/:id",
+    path: "/admin/edit/:id",
     element: <FormUpdate />,
   },
 

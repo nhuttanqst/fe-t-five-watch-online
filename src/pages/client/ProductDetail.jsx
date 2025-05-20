@@ -6,7 +6,8 @@ import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
-import useWatches from "../../apiservice/useWathes";
+
+import useWatchesData from "../../apiservice/useWathes";
 import "react-image-gallery/styles/css/image-gallery.css";
 import "../../styles/product.detail.css";
 
@@ -17,7 +18,7 @@ const typeMapping = {
 };
 
 const ProductDetailPage = () => {
-  const { watches } = useWatches();
+  const { data, loading } = useWatchesData();
   const [filteredWatches, setFilteredWatches] = useState([]);
   const [type, setType] = useState("");
   const [images, setImages] = useState([]);
@@ -58,15 +59,18 @@ const ProductDetailPage = () => {
 
   // Lọc sản phẩm tương tự theo category
   useEffect(() => {
-    if (dataViewDetail?.category && Array.isArray(watches)) {
-      const similarWatches = watches.filter(
+
+    if (dataViewDetail?.category && !loading && data ) {
+      const allWatches = [...data.male, ...data.female, ...data.couple];
+      const similarWatches = allWatches.filter(
+
         (watch) =>
           watch.category === dataViewDetail.category &&
           watch.id !== dataViewDetail.id
       );
       setFilteredWatches(similarWatches);
     }
-  }, [dataViewDetail?.category, watches, dataViewDetail?.id]);
+  }, [dataViewDetail?.category, data, loading, dataViewDetail?.id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -105,7 +109,7 @@ const ProductDetailPage = () => {
 
   const handleAddReview = async () => {
     if (!newStar) {
-      messageApi.open({ type: "error", content: "Vui lòng cho số sao." });
+      messageApi.open({ type: "error", content: "Vui lòng chọn số sao!" });
       return;
     }
     setSubmitLoading(true);
@@ -285,7 +289,7 @@ const ProductDetailPage = () => {
                       alt={review.user.tenNguoiDung}
                       className="w-8 h-8 rounded-full mr-2"
                     />
-                    <span className="mr-2 text-gray-600">
+                    <span className="mr-2 text-gray-600 select-none">
                       {review.user.tenNguoiDung}
                     </span>
                   </div>

@@ -46,6 +46,14 @@ export const createOrderApi = (data) => {
   return axiosOrder.post("/api/orders", data);
 };
 
+export const updateProfileApi = (data) => {
+  return axiosUser.put("/api/users", data);
+};
+
+export const changePasswordApi = (data) => {
+  return axiosUser.put("/api/users/changePassword", data);
+};
+
 export const getOrdersApi = (page = 1, limit = 10) => {
   return axiosOrder.get(`/api/orders?page=${page}&limit=${limit}`);
 };
@@ -56,4 +64,15 @@ export const fetchReviewsByProduct = (productId) => {
 
 export const addReviewApi = (data) => {
   return axiosReview.post("/api/reviews/add", data);
+};
+
+export const uploadAvatarApi = (file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+  return axiosUser.post("http://localhost:3001/api/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    withCredentials: true,
+  });
 };
