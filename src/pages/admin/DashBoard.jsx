@@ -79,24 +79,24 @@ const Dashboard = () => {
     return brand ? brand.ten : "Không xác định";
   };
 
-  const fetchProducts = async () => {
-    try {
-      const response = await getProducts(1, 10);
-      console.log("Products API Response:", response);
-      if (response && response.productDatas) {
-        setProducts(response.productDatas);
-        setError(null);
-      } else {
-        setError("Không có dữ liệu sản phẩm trả về từ API.");
-        setProducts([]);
-      }
-      setSuccess(null);
-    } catch (err) {
-      console.error("Fetch Products Error:", err);
-      setError(err.message || "Có lỗi xảy ra khi lấy dữ liệu sản phẩm.");
-      setSuccess(null);
+const fetchProducts = async () => {
+  try {
+    const response = await getProducts(1, 30);
+    console.log("Products API Response:", response);
+    if (response && response.productDatas) {
+      setProducts(response.productDatas);
+      setError(null);
+    } else {
+      setError("Không có dữ liệu sản phẩm trả về từ API.");
+      setProducts([]);
     }
-  };
+    setSuccess(null);
+  } catch (err) {
+    console.error("Fetch Products Error:", err);
+    setError(err.message || "Có lỗi xảy ra khi lấy dữ liệu sản phẩm.");
+    setSuccess(null);
+  }
+};
 
   const handleEdit = (product) => {
     navigate(`/admin/edit/${product._id}`);
