@@ -77,7 +77,7 @@ const Dashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await getProducts(1, 10);
+      const response = await getProducts(1, 30);
       console.log("Products API Response:", response);
       if (response && response.productDatas) {
         setProducts(response.productDatas);
@@ -86,7 +86,6 @@ const Dashboard = () => {
       }
     } catch (err) {
       console.error("Fetch Products Error:", err);
-      setProducts([]);
     }
   };
 
