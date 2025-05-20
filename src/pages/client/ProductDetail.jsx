@@ -6,7 +6,7 @@ import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
-import useWatches from "../../apiservice/apiProduct";
+import useWatches from "../../apiservice/useWathes";
 import "react-image-gallery/styles/css/image-gallery.css";
 import "../../styles/product.detail.css";
 
@@ -58,7 +58,7 @@ const ProductDetailPage = () => {
 
   // Lọc sản phẩm tương tự theo category
   useEffect(() => {
-    if (dataViewDetail?.category) {
+    if (dataViewDetail?.category && Array.isArray(watches)) {
       const similarWatches = watches.filter(
         (watch) =>
           watch.category === dataViewDetail.category &&
