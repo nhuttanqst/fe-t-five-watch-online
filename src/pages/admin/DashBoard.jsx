@@ -325,6 +325,23 @@ const Dashboard = () => {
     }
   };
 
+  // Lọc đơn hàng theo searchTerm trên trang hiện tại
+  const filteredOrders = searchTerm.trim()
+    ? orders.filter((order) => {
+        const keyword = searchTerm.toLowerCase();
+        return (
+          (order.tenNguoiDung &&
+            order.tenNguoiDung.toLowerCase().includes(keyword)) ||
+          (order.trangThaiDonHang &&
+            order.trangThaiDonHang.toLowerCase().includes(keyword)) ||
+          (order.trangThaiThanhToan &&
+            order.trangThaiThanhToan.toLowerCase().includes(keyword)) ||
+          (order.sdt && order.sdt.toLowerCase().includes(keyword)) ||
+          (order.email && order.email.toLowerCase().includes(keyword))
+        );
+      })
+    : orders;
+
   return (
     <div className="min-h-screen flex font-roboto bg-gray-100">
       {/* Sidebar */}
@@ -814,7 +831,7 @@ const Dashboard = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {orders.length === 0 ? (
+                        {filteredOrders.length === 0 ? (
                           <tr>
                             <td
                               colSpan={7}
@@ -824,7 +841,7 @@ const Dashboard = () => {
                             </td>
                           </tr>
                         ) : (
-                          orders.map((order, index) => (
+                          filteredOrders.map((order, index) => (
                             <motion.tr
                               key={order._id}
                               className="bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm rounded-xl"
@@ -856,29 +873,27 @@ const Dashboard = () => {
                               <td className="p-3 align-middle">
                                 <select
                                   className={`px-3 py-1 rounded-full text-sm font-semibold shadow-sm select-none border focus:outline-none focus:ring-2
-                                    ${
-                                      order.trangThaiDonHang === "Đã giao"
-                                        ? "bg-green-100 text-green-700 border-green-300"
-                                        : order.trangThaiDonHang ===
-                                          "Chờ xác nhận"
-                                        ? "bg-yellow-50 text-yellow-700 border-yellow-400"
-                                        : order.trangThaiDonHang ===
-                                          "Đang xử lý"
-                                        ? "bg-yellow-100 text-yellow-700 border-yellow-300"
-                                        : order.trangThaiDonHang ===
-                                          "Đã xác nhận"
-                                        ? "bg-blue-50 text-blue-500 border-blue-300"
-                                        : order.trangThaiDonHang === "Đã hủy"
-                                        ? "bg-red-50 text-red-500 border-red-300"
-                                        : order.trangThaiDonHang ===
-                                          "Đang giao hàng"
-                                        ? "bg-teal-50 text-teal-500 border-teal-300"
-                                        : order.trangThaiDonHang ===
-                                          "Đã giao hàng"
-                                        ? "bg-indigo-50 text-indigo-600 border-indigo-300"
-                                        : "bg-gray-100 text-gray-700 border-gray-300"
-                                    }
-                                  `}
+                                  ${
+                                    order.trangThaiDonHang === "Đã giao"
+                                      ? "bg-green-100 text-green-700 border-green-300"
+                                      : order.trangThaiDonHang ===
+                                        "Chờ xác nhận"
+                                      ? "bg-yellow-50 text-yellow-700 border-yellow-400"
+                                      : order.trangThaiDonHang === "Đang xử lý"
+                                      ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                                      : order.trangThaiDonHang === "Đã xác nhận"
+                                      ? "bg-blue-50 text-blue-500 border-blue-300"
+                                      : order.trangThaiDonHang === "Đã hủy"
+                                      ? "bg-red-50 text-red-500 border-red-300"
+                                      : order.trangThaiDonHang ===
+                                        "Đang giao hàng"
+                                      ? "bg-teal-50 text-teal-500 border-teal-300"
+                                      : order.trangThaiDonHang ===
+                                        "Đã giao hàng"
+                                      ? "bg-indigo-50 text-indigo-600 border-indigo-300"
+                                      : "bg-gray-100 text-gray-700 border-gray-300"
+                                  }
+                                `}
                                   value={order.trangThaiDonHang}
                                   onChange={(e) =>
                                     handleUpdateOrderStatus(
@@ -905,12 +920,11 @@ const Dashboard = () => {
                               <td className="p-3 align-middle">
                                 <span
                                   className={`px-3 py-1 rounded-full text-sm font-semibold shadow-sm select-none
-                                    ${
-                                      order.trangThaiThanhToan ===
-                                      "Đã thanh toán"
-                                        ? "bg-green-50 text-green-600 border border-green-400"
-                                        : "bg-gray-100 text-gray-700 border border-gray-300"
-                                    }`}
+                                  ${
+                                    order.trangThaiThanhToan === "Đã thanh toán"
+                                      ? "bg-green-50 text-green-600 border border-green-400"
+                                      : "bg-gray-100 text-gray-700 border border-gray-300"
+                                  }`}
                                 >
                                   {order.trangThaiThanhToan ||
                                     "Chưa thanh toán"}
