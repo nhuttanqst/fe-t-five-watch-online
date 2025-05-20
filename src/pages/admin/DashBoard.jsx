@@ -21,7 +21,8 @@ import {
   deleteBrand,
   toggleBrandVisibility,
 } from "../../apiservice/apiBrand";
-import { getAllOrdersApi } from "../../services/api";
+import { getAllOrdersApi, updateOrderStatusApi } from "../../services/api";
+import { Drawer } from "antd";
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
   CategoryScale,
@@ -44,6 +45,9 @@ const Dashboard = () => {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersPage, setOrdersPage] = useState(1);
   const [ordersTotalPages, setOrdersTotalPages] = useState(1);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [orderDetail, setOrderDetail] = useState(null);
 
   const itemsPerPage = 5;
 
@@ -293,6 +297,31 @@ const Dashboard = () => {
   const handleOrdersNext = () => {
     if (ordersPage < ordersTotalPages) {
       setOrdersPage(ordersPage + 1);
+    }
+  };
+
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatusApi(orderId, newStatus);
+      setOrders((prev) =>
+        prev.map((order) => {
+          if (order._id === orderId) {
+            // Nếu chuyển sang 'Đã giao hàng' thì cập nhật trạng thái thanh toán luôn
+            if (newStatus === "Đã giao hàng") {
+              return {
+                ...order,
+                trangThaiDonHang: newStatus,
+                trangThaiThanhToan: "Đã thanh toán",
+              };
+            }
+            return { ...order, trangThaiDonHang: newStatus };
+          }
+          return order;
+        })
+      );
+    } catch (err) {
+      console.log("error: ", err);
+      alert("Cập nhật trạng thái thất bại!");
     }
   };
 
@@ -825,22 +854,53 @@ const Dashboard = () => {
                                   : "-"}
                               </td>
                               <td className="p-3 align-middle">
-                                <span
-                                  className={`px-3 py-1 rounded-full text-sm font-semibold shadow-sm select-none
+                                <select
+                                  className={`px-3 py-1 rounded-full text-sm font-semibold shadow-sm select-none border focus:outline-none focus:ring-2
                                     ${
                                       order.trangThaiDonHang === "Đã giao"
-                                        ? "bg-green-100 text-green-700 border border-green-300"
+                                        ? "bg-green-100 text-green-700 border-green-300"
                                         : order.trangThaiDonHang ===
                                           "Chờ xác nhận"
-                                        ? "bg-yellow-50 text-yellow-700 border border-yellow-400"
+                                        ? "bg-yellow-50 text-yellow-700 border-yellow-400"
                                         : order.trangThaiDonHang ===
                                           "Đang xử lý"
-                                        ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                        : "bg-gray-100 text-gray-700 border border-gray-300"
-                                    }`}
+                                        ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                                        : order.trangThaiDonHang ===
+                                          "Đã xác nhận"
+                                        ? "bg-blue-50 text-blue-500 border-blue-300"
+                                        : order.trangThaiDonHang === "Đã hủy"
+                                        ? "bg-red-50 text-red-500 border-red-300"
+                                        : order.trangThaiDonHang ===
+                                          "Đang giao hàng"
+                                        ? "bg-teal-50 text-teal-500 border-teal-300"
+                                        : order.trangThaiDonHang ===
+                                          "Đã giao hàng"
+                                        ? "bg-indigo-50 text-indigo-600 border-indigo-300"
+                                        : "bg-gray-100 text-gray-700 border-gray-300"
+                                    }
+                                  `}
+                                  value={order.trangThaiDonHang}
+                                  onChange={(e) =>
+                                    handleUpdateOrderStatus(
+                                      order._id,
+                                      e.target.value
+                                    )
+                                  }
                                 >
-                                  {order.trangThaiDonHang || "-"}
-                                </span>
+                                  <option value="Chờ xác nhận">
+                                    Chờ xác nhận
+                                  </option>
+                                  <option value="Đã xác nhận">
+                                    Đã xác nhận
+                                  </option>
+                                  <option value="Đang giao hàng">
+                                    Đang giao hàng
+                                  </option>
+                                  <option value="Đã giao hàng">
+                                    Đã giao hàng
+                                  </option>
+                                  <option value="Đã hủy">Đã hủy</option>
+                                </select>
                               </td>
                               <td className="p-3 align-middle">
                                 <span
@@ -857,7 +917,13 @@ const Dashboard = () => {
                                 </span>
                               </td>
                               <td className="p-3 align-middle">
-                                <button className="text-blue-500 hover:underline font-medium cursor-pointer">
+                                <button
+                                  className="text-blue-500 hover:underline font-medium cursor-pointer"
+                                  onClick={() => {
+                                    setOrderDetail(order);
+                                    setDrawerOpen(true);
+                                  }}
+                                >
                                   Xem chi tiết
                                 </button>
                               </td>
@@ -867,6 +933,91 @@ const Dashboard = () => {
                       </tbody>
                     </table>
                   )}
+                  {/* Drawer chi tiết đơn hàng */}
+                  <Drawer
+                    title="Chi tiết đơn hàng"
+                    placement="right"
+                    width={480}
+                    onClose={() => {
+                      setDrawerOpen(false);
+                      setOrderDetail(null);
+                    }}
+                    open={drawerOpen}
+                  >
+                    {orderDetail && (
+                      <>
+                        <div className="mb-2">
+                          <span className="font-medium">Khách hàng:</span>{" "}
+                          {orderDetail.tenNguoiDung}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Email:</span>{" "}
+                          {orderDetail.email}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Số điện thoại:</span>{" "}
+                          {orderDetail.sdt}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Địa chỉ:</span>{" "}
+                          {orderDetail.diaChi}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Tổng tiền:</span>{" "}
+                          {orderDetail.tongTien?.toLocaleString("vi-VN") + " đ"}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">
+                            Trạng thái đơn hàng:
+                          </span>{" "}
+                          {orderDetail.trangThaiDonHang}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">
+                            Trạng thái thanh toán:
+                          </span>{" "}
+                          {orderDetail.trangThaiThanhToan}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Ngày tạo:</span>{" "}
+                          {orderDetail.createdAt
+                            ? new Date(orderDetail.createdAt).toLocaleString(
+                                "vi-VN"
+                              )
+                            : "-"}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Ghi chú:</span>{" "}
+                          {orderDetail.ghiChu || "-"}
+                        </div>
+                        <div className="mt-4">
+                          <h4 className="font-semibold mb-2">
+                            Sản phẩm trong đơn:
+                          </h4>
+                          <ul className="divide-y divide-gray-200">
+                            {orderDetail.chiTietDonHang?.map((item, idx) => (
+                              <li key={idx} className="py-2 text-left">
+                                <div>
+                                  <span className="font-medium">
+                                    Tên sản phẩm:
+                                  </span>{" "}
+                                  {item.tenSanPham}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Số lượng:</span>{" "}
+                                  {item.soLuong}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Giá:</span>{" "}
+                                  {item.giaBan?.toLocaleString("vi-VN") + " đ"}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </>
+                    )}
+                  </Drawer>
                   <div className="flex justify-between items-center p-4">
                     <span>
                       Trang {ordersPage} / {ordersTotalPages}
