@@ -531,7 +531,7 @@ const Dashboard = () => {
     <div className="min-h-screen flex font-roboto bg-gray-100">
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-lg fixed h-full">
-        <div className="p-4 border-t">
+        <div className="p-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <img
               src={user.avatar}
@@ -539,10 +539,12 @@ const Dashboard = () => {
               className="h-10 w-10 rounded-full"
             />
             <div>
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-gray-700 select-none mb-0.5">
                 {user.tenNguoiDung}
               </p>
-              <p className="text-xs text-gray-500">{user.quyen.tenQuyen}</p>
+              <p className="text-xs text-gray-500 select-none">
+                {user.quyen.tenQuyen}
+              </p>
             </div>
           </div>
         </div>
@@ -575,17 +577,17 @@ const Dashboard = () => {
       <div className="flex-1 ml-64">
         {/* Header */}
         <header className="bg-red-700 text-white p-4 flex justify-between items-center shadow-md">
-          <h1 className="text-xl font-semibold">
+          <h1 className="text-xl font-semibold select-none">
             Admin Dashboard - T-Five Watch
           </h1>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer">
             <motion.button
-              className="relative text-white"
+              className="relative text-white cursor-pointer"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
               🔔
-              <span className="absolute -top-1 -right-1 bg-yellow-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-yellow-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center cursor-pointer">
                 3
               </span>
             </motion.button>
@@ -613,7 +615,7 @@ const Dashboard = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 select-none">
                   Tổng quan
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -747,7 +749,7 @@ const Dashboard = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 select-none">
                   Quản lý sản phẩm
                 </h2>
                 <div className="flex justify-between items-center mb-4">
@@ -849,7 +851,7 @@ const Dashboard = () => {
                     </span>
                     <div className="flex gap-2">
                       <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(currentPage - 1)}
                         whileHover={{ scale: 1.05 }}
@@ -858,7 +860,7 @@ const Dashboard = () => {
                         Trước
                       </motion.button>
                       <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
                         disabled={currentPage === totalPages(filteredProducts)}
                         onClick={() => setCurrentPage(currentPage + 1)}
                         whileHover={{ scale: 1.05 }}
@@ -880,7 +882,7 @@ const Dashboard = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 select-none">
                   Quản lý Thương Hiệu
                 </h2>
                 <form onSubmit={handleBrandSubmit} className="mb-6">
@@ -1003,7 +1005,7 @@ const Dashboard = () => {
                     </span>
                     <div className="flex gap-2">
                       <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(currentPage - 1)}
                         whileHover={{ scale: 1.05 }}
@@ -1012,7 +1014,7 @@ const Dashboard = () => {
                         Trước
                       </motion.button>
                       <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
                         disabled={currentPage === totalPages(filteredBrands)}
                         onClick={() => setCurrentPage(currentPage + 1)}
                         whileHover={{ scale: 1.05 }}
@@ -1034,7 +1036,7 @@ const Dashboard = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center select-none">
                   Quản lý đơn hàng
                 </h2>
                 <div className="flex justify-between items-center mb-4">
@@ -1292,7 +1294,7 @@ const Dashboard = () => {
                     </span>
                     <div className="flex gap-2">
                       <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
                         disabled={ordersPage === 1}
                         onClick={handleOrdersPrev}
                         whileHover={{ scale: 1.05 }}
@@ -1301,7 +1303,7 @@ const Dashboard = () => {
                         Trước
                       </motion.button>
                       <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
                         disabled={ordersPage === ordersTotalPages}
                         onClick={handleOrdersNext}
                         whileHover={{ scale: 1.05 }}
@@ -1323,7 +1325,7 @@ const Dashboard = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 select-none">
                   Quản lý người dùng
                 </h2>
                 <div className="flex justify-between items-center mb-4">
@@ -1412,14 +1414,14 @@ const Dashboard = () => {
                     </span>
                     <div className="flex gap-2">
                       <button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 cursor-pointer"
                         disabled={usersPage === 1}
                         onClick={() => setUsersPage(usersPage - 1)}
                       >
                         Trước
                       </button>
                       <button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 cursor-pointer"
                         disabled={usersPage === usersTotalPages}
                         onClick={() => setUsersPage(usersPage + 1)}
                       >
@@ -1439,7 +1441,7 @@ const Dashboard = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 select-none">
                   Thống kê
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
