@@ -29,7 +29,7 @@ import {
 } from "../../services/api";
 import { Drawer, Spin, Modal, Form, Input, Select } from "antd";
 import { useCurrentApp } from "../../context/app.context";
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
@@ -590,7 +590,7 @@ const Dashboard = () => {
               </span>
             </motion.button>
             <motion.button
-              className="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700"
+              className="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700 cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
@@ -1543,184 +1543,209 @@ const Dashboard = () => {
             )}
           </AnimatePresence>
           {/* Modal thêm đơn hàng */}
-          {addModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-100 backdrop-blur-sm">
-              <form
-                className="bg-white rounded-xl shadow-lg p-6 w-full max-w-xl relative animate-fadeIn"
-                onSubmit={handleAddOrderSubmit}
-              >
-                <button
-                  className="absolute top-2 right-3 text-xl text-gray-400 hover:text-red-600 cursor-pointer"
-                  type="button"
-                  onClick={() => setAddModalOpen(false)}
-                >
-                  <CloseOutlined />
-                </button>
-                <h3 className="text-lg font-semibold mb-4 text-center">
-                  Thêm đơn hàng mới
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    name="tenNguoiDung"
-                    value={addOrderForm.tenNguoiDung}
-                    onChange={handleAddOrderChange}
-                    required
-                    className="border rounded p-2"
-                    placeholder="Tên người dùng"
-                  />
-                  <input
-                    name="email"
-                    value={addOrderForm.email}
-                    onChange={handleAddOrderChange}
-                    required
-                    className="border rounded p-2"
-                    placeholder="Email"
-                  />
-                  <input
-                    name="sdt"
-                    value={addOrderForm.sdt}
-                    onChange={handleAddOrderChange}
-                    required
-                    className="border rounded p-2"
-                    placeholder="Số điện thoại"
-                  />
-                  <input
-                    name="diaChi"
-                    value={addOrderForm.diaChi}
-                    onChange={handleAddOrderChange}
-                    required
-                    className="border rounded p-2"
-                    placeholder="Địa chỉ"
-                  />
-                  <input
-                    name="tongTien"
-                    value={addOrderForm.tongTien}
-                    onChange={handleAddOrderChange}
-                    required
-                    className="border rounded p-2"
-                    placeholder="Tổng tiền"
-                    type="number"
-                    min="0"
-                  />
-                  <select
-                    name="trangThaiDonHang"
-                    value={addOrderForm.trangThaiDonHang}
-                    onChange={handleAddOrderChange}
-                    className="border rounded p-2"
-                  >
-                    <option value="Chờ xác nhận">Chờ xác nhận</option>
-                    <option value="Đã xác nhận">Đã xác nhận</option>
-                    <option value="Đang giao hàng">Đang giao hàng</option>
-                    <option value="Đã giao hàng">Đã giao hàng</option>
-                    <option value="Đã hủy">Đã hủy</option>
-                  </select>
-                  <select
-                    name="trangThaiThanhToan"
-                    value={addOrderForm.trangThaiThanhToan}
-                    onChange={handleAddOrderChange}
-                    className="border rounded p-2"
-                  >
-                    <option value="Chưa thanh toán">Chưa thanh toán</option>
-                    <option value="Đã thanh toán">Đã thanh toán</option>
-                  </select>
-                  <select
-                    name="phuongThucThanhToan"
-                    value={addOrderForm.phuongThucThanhToan}
-                    onChange={handleAddOrderChange}
-                    className="border rounded p-2"
-                    required
-                  >
-                    <option value="">Chọn phương thức thanh toán</option>
-                    <option value="COD">Tiền mặt</option>
-                    <option value="MOMO">MOMO</option>
-                  </select>
-                </div>
-                <textarea
-                  name="ghiChu"
-                  value={addOrderForm.ghiChu}
+          <Modal
+            title={
+              <div className="text-center w-full text-xl">
+                Thêm đơn hàng mới
+              </div>
+            }
+            open={addModalOpen}
+            onCancel={() => setAddModalOpen(false)}
+            footer={null}
+            centered
+            width={600}
+          >
+            <form onSubmit={handleAddOrderSubmit}>
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  name="tenNguoiDung"
+                  value={addOrderForm.tenNguoiDung}
                   onChange={handleAddOrderChange}
-                  className="border rounded p-2 w-full mt-3"
-                  placeholder="Ghi chú"
+                  required
+                  className="border rounded p-2"
+                  placeholder="Tên người dùng"
                 />
-                <div className="mt-4">
-                  <h4 className="font-semibold mb-2">Sản phẩm trong đơn</h4>
-                  {addOrderForm.chiTietDonHang.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex flex-nowrap gap-2 mb-2 items-center"
-                    >
-                      <div className="flex-1 min-w-[160px]">
-                        <select
-                          value={item.sanPhamId}
-                          onChange={(e) =>
-                            handleAddOrderChange(e, idx, "sanPhamId")
-                          }
-                          className="border rounded p-2 w-full"
-                          required
-                        >
-                          <option value="">Chọn sản phẩm</option>
-                          {products.map((p) => (
-                            <option key={p._id} value={p._id}>
-                              {p.tenDH}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="w-20">
-                        <input
-                          value={item.soLuong}
-                          onChange={(e) =>
-                            handleAddOrderChange(e, idx, "soLuong")
-                          }
-                          className="border rounded p-2 w-full"
-                          type="number"
-                          min="1"
-                          placeholder="Số lượng"
-                          required
-                        />
-                      </div>
-                      <div className="min-w-[100px]">
-                        <input
-                          value={item.giaBan}
-                          onChange={(e) =>
-                            handleAddOrderChange(e, idx, "giaBan")
-                          }
-                          className="border rounded p-2 w-full"
-                          type="number"
-                          min="0"
-                          placeholder="Giá bán"
-                          required
-                        />
-                      </div>
-                      {addOrderForm.chiTietDonHang.length > 1 && (
-                        <button
-                          type="button"
-                          className="text-red-500 font-bold"
-                          onClick={() => handleAddOrderProductRemove(idx)}
-                        >
-                          -
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    className="text-green-600 font-bold mt-2"
-                    onClick={handleAddOrderProductAdd}
-                  >
-                    + Thêm sản phẩm
-                  </button>
-                </div>
-                <button
-                  type="submit"
-                  className="mt-6 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 font-semibold cursor-pointer"
-                  disabled={addOrderLoading}
+                <Input
+                  name="email"
+                  value={addOrderForm.email}
+                  onChange={handleAddOrderChange}
+                  required
+                  className="border rounded p-2"
+                  placeholder="Email"
+                />
+                <Input
+                  name="sdt"
+                  value={addOrderForm.sdt}
+                  onChange={handleAddOrderChange}
+                  required
+                  className="border rounded p-2"
+                  placeholder="Số điện thoại"
+                />
+                <Input
+                  name="diaChi"
+                  value={addOrderForm.diaChi}
+                  onChange={handleAddOrderChange}
+                  required
+                  className="border rounded p-2"
+                  placeholder="Địa chỉ"
+                />
+                <Input
+                  name="tongTien"
+                  value={addOrderForm.tongTien}
+                  onChange={handleAddOrderChange}
+                  required
+                  className="border rounded p-2"
+                  placeholder="Tổng tiền"
+                  type="number"
+                  min="0"
+                />
+                <Select
+                  name="trangThaiDonHang"
+                  value={addOrderForm.trangThaiDonHang}
+                  onChange={(value) =>
+                    handleAddOrderChange({
+                      target: { name: "trangThaiDonHang", value },
+                    })
+                  }
+                  className="border rounded p-2"
                 >
-                  {addOrderLoading ? "Đang thêm..." : "Thêm đơn hàng"}
+                  <Select.Option value="Chờ xác nhận">
+                    Chờ xác nhận
+                  </Select.Option>
+                  <Select.Option value="Đã xác nhận">Đã xác nhận</Select.Option>
+                  <Select.Option value="Đang giao hàng">
+                    Đang giao hàng
+                  </Select.Option>
+                  <Select.Option value="Đã giao hàng">
+                    Đã giao hàng
+                  </Select.Option>
+                  <Select.Option value="Đã hủy">Đã hủy</Select.Option>
+                </Select>
+                <Select
+                  name="trangThaiThanhToan"
+                  value={addOrderForm.trangThaiThanhToan}
+                  onChange={(value) =>
+                    handleAddOrderChange({
+                      target: { name: "trangThaiThanhToan", value },
+                    })
+                  }
+                  className="border rounded p-2"
+                >
+                  <Select.Option value="Chưa thanh toán">
+                    Chưa thanh toán
+                  </Select.Option>
+                  <Select.Option value="Đã thanh toán">
+                    Đã thanh toán
+                  </Select.Option>
+                </Select>
+                <Select
+                  name="phuongThucThanhToan"
+                  value={addOrderForm.phuongThucThanhToan}
+                  onChange={(value) =>
+                    handleAddOrderChange({
+                      target: { name: "phuongThucThanhToan", value },
+                    })
+                  }
+                  className="border rounded p-2"
+                  required
+                >
+                  <Select.Option value="">
+                    Chọn phương thức thanh toán
+                  </Select.Option>
+                  <Select.Option value="COD">Tiền mặt</Select.Option>
+                  <Select.Option value="MOMO">MOMO</Select.Option>
+                </Select>
+              </div>
+              <Input.TextArea
+                name="ghiChu"
+                value={addOrderForm.ghiChu}
+                onChange={handleAddOrderChange}
+                className="border rounded p-2 w-full mt-3"
+                style={{
+                  marginTop: "15px",
+                }}
+                placeholder="Ghi chú"
+              />
+              <div className="mt-4">
+                <h4 className="font-semibold mb-2">Sản phẩm trong đơn</h4>
+                {addOrderForm.chiTietDonHang.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-nowrap gap-2 mb-3 items-center"
+                  >
+                    <div className="flex-1 min-w-[160px]">
+                      <Select
+                        value={item.sanPhamId}
+                        onChange={(value) =>
+                          handleAddOrderChange(
+                            { target: { value } },
+                            idx,
+                            "sanPhamId"
+                          )
+                        }
+                        className="border rounded p-2 w-full"
+                        required
+                      >
+                        <Select.Option value="">Chọn sản phẩm</Select.Option>
+                        {products.map((p) => (
+                          <Select.Option key={p._id} value={p._id}>
+                            {p.tenDH}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="w-20">
+                      <Input
+                        value={item.soLuong}
+                        onChange={(e) =>
+                          handleAddOrderChange(e, idx, "soLuong")
+                        }
+                        className="border rounded p-2 w-full"
+                        type="number"
+                        min="1"
+                        placeholder="Số lượng"
+                        required
+                      />
+                    </div>
+                    <div className="min-w-[100px]">
+                      <Input
+                        value={item.giaBan}
+                        onChange={(e) => handleAddOrderChange(e, idx, "giaBan")}
+                        className="border rounded p-2 w-full"
+                        type="number"
+                        min="0"
+                        placeholder="Giá bán"
+                        required
+                      />
+                    </div>
+                    {addOrderForm.chiTietDonHang.length > 1 && (
+                      <button
+                        type="button"
+                        className="text-red-500 font-bold cursor-pointer"
+                        onClick={() => handleAddOrderProductRemove(idx)}
+                      >
+                        <MinusOutlined />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="text-red-600 font-bold mt-2 cursor-pointer"
+                  onClick={handleAddOrderProductAdd}
+                >
+                  <PlusOutlined /> Thêm sản phẩm
                 </button>
-              </form>
-            </div>
-          )}
+              </div>
+              <button
+                type="submit"
+                className="mt-6 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 font-semibold cursor-pointer"
+                disabled={addOrderLoading}
+              >
+                {addOrderLoading ? "Đang thêm..." : "Thêm đơn hàng"}
+              </button>
+            </form>
+          </Modal>
           {/* Modal sửa user */}
           <Modal
             title="Sửa thông tin người dùng"
