@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { debounce } from "lodash";
-import axios from "axios";
+import { chatbotApi } from "../../services/api";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +10,8 @@ const Chatbot = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState("");
+
+  const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   // Tạo và lưu trữ sessionId khi component mount
@@ -28,26 +30,27 @@ const Chatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    if (isOpen && input === "" && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [input, isOpen]);
+
   const handleSendMessage = debounce(async () => {
     if (!input.trim()) return;
 
     setMessages([...messages, { sender: "user", text: input }]);
+    setInput("");
+    if (inputRef.current) inputRef.current.focus();
+
     setIsLoading(true);
 
     try {
-      console.log("Sending data to backend:", {
+      const response = await chatbotApi({
         message: input,
         sessionId: sessionId,
       });
-
-      const response = await axios.post("http://localhost:5000/api/chatbot", {
-        message: input,
-        sessionId: sessionId, // Gửi sessionId thay vì pastMessages
-      });
-
-      console.log("Response from backend:", response.data);
-
-      const botResponse = response.data.reply;
+      const botResponse = response.reply;
       setMessages((prev) => [...prev, { sender: "bot", text: botResponse }]);
     } catch (error) {
       console.error("Error calling backend API:", error.message);
@@ -61,16 +64,14 @@ const Chatbot = () => {
     } finally {
       setIsLoading(false);
     }
-
-    setInput("");
-  }, 1000);
+  }, 100);
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition"
+          className="bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition cursor-pointer"
         >
           <svg
             className="w-6 h-6"
@@ -93,7 +94,10 @@ const Chatbot = () => {
         <div className="bg-white rounded-lg shadow-lg w-80 h-96 flex flex-col">
           <div className="bg-red-600 text-white p-3 rounded-t-lg flex justify-between items-center">
             <h3 className="font-semibold">T-Five Chatbot</h3>
-            <button onClick={() => setIsOpen(false)} className="text-white">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white cursor-pointer hover:text-gray-300 transition-all duration-300"
+            >
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -143,6 +147,7 @@ const Chatbot = () => {
           <div className="p-3 border-t">
             <div className="flex items-center">
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -153,7 +158,7 @@ const Chatbot = () => {
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-red-600 text-white p-2 rounded-r-lg hover:bg-red-700"
+                className="bg-red-600 text-white p-2 rounded-r-lg hover:bg-red-700 cursor-pointer"
                 disabled={isLoading}
               >
                 Gửi

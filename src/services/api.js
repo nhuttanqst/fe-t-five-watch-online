@@ -5,6 +5,9 @@ const axiosOrder = createInstanceAxios(import.meta.env.VITE_BACKEND_ORDER_URL);
 const axiosReview = createInstanceAxios(
   import.meta.env.VITE_BACKEND_REVIEW_URL
 );
+const axiosChatbot = createInstanceAxios(
+  import.meta.env.VITE_BACKEND_CHATBOT_URL
+);
 
 export const registerApi = (data) => {
   return axiosUser.post("/api/auth/register", data);
@@ -78,6 +81,10 @@ export const fetchReviewsByProduct = (productId) => {
 
 export const addReviewApi = (data) => {
   return axiosReview.post("/api/reviews/add", data);
+};
+
+export const chatbotApi = (data) => {
+  return axiosChatbot.post("/api/chatbot", data);
 };
 
 export const uploadAvatarApi = (file) => {
