@@ -21,8 +21,15 @@ import {
   deleteBrand,
   toggleBrandVisibility,
 } from "../../apiservice/apiBrand";
-import { getAllOrdersApi, updateOrderStatusApi } from "../../services/api";
-import { Drawer } from "antd";
+import {
+  getAllOrdersApi,
+  updateOrderStatusApi,
+  createOrderApi,
+  getUsersApi,
+  updateProfileApi as updateUserApi,
+} from "../../services/api";
+import { Drawer, Spin, Modal, Form, Input, Select } from "antd";
+import { useCurrentApp } from "../../context/app.context";
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
   CategoryScale,
@@ -45,9 +52,37 @@ const Dashboard = () => {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersPage, setOrdersPage] = useState(1);
   const [ordersTotalPages, setOrdersTotalPages] = useState(1);
-  const [modalOpen, setModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [orderDetail, setOrderDetail] = useState(null);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [addOrderLoading, setAddOrderLoading] = useState(false);
+  const [addOrderForm, setAddOrderForm] = useState({
+    tenNguoiDung: "",
+    email: "",
+    sdt: "",
+    diaChi: "",
+    tongTien: "",
+    trangThaiDonHang: "Chờ xác nhận",
+    trangThaiThanhToan: "Chưa thanh toán",
+    phuongThucThanhToan: "",
+    ghiChu: "",
+    chiTietDonHang: [{ sanPhamId: "", soLuong: 1, giaBan: "" }],
+  });
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersTotalPages, setUsersTotalPages] = useState(1);
+  const [userSearch, setUserSearch] = useState("");
+  const [editUserModalOpen, setEditUserModalOpen] = useState(false);
+  const [editUserLoading, setEditUserLoading] = useState(false);
+  const [editUserForm, setEditUserForm] = useState({
+    _id: "",
+    hoTen: "",
+    gioiTinh: "",
+    sdt: "",
+  });
+
+  const { messageApi } = useCurrentApp();
 
   const itemsPerPage = 5;
 
@@ -174,26 +209,27 @@ const Dashboard = () => {
     }
   };
 
-  // Lấy danh sách đơn hàng từ API
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setOrdersLoading(true);
-      try {
-        const res = await getAllOrdersApi(ordersPage, itemsPerPage);
-        if (res.data && res.status) {
-          setOrders(res.data.orders);
-          setOrdersTotalPages(res.data.totalPages);
-        } else {
-          setOrders([]);
-        }
-      } catch (err) {
-        console.log(err);
+  const fetchOrders = async (page = ordersPage) => {
+    setOrdersLoading(true);
+    try {
+      const res = await getAllOrdersApi(page, itemsPerPage);
+      if (res.data && res.status) {
+        setOrders(res.data.orders);
+        setOrdersTotalPages(res.data.totalPages);
+      } else {
         setOrders([]);
-      } finally {
-        setOrdersLoading(false);
       }
-    };
+    } catch (err) {
+      console.log(err);
+      setOrders([]);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchOrders();
+    // eslint-disable-next-line
   }, [ordersPage, itemsPerPage]);
 
   // Dữ liệu biểu đồ
@@ -225,34 +261,6 @@ const Dashboard = () => {
   const filteredProducts = products.filter((product) =>
     product.tenDH.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const filteredCustomers = [
-    {
-      id: 1,
-      name: "Vũ Minh Thuan",
-      email: "minhthuan2020@gmail.com",
-      phone: "1900.6777",
-    },
-    {
-      id: 2,
-      name: "Ngô Nhật Tân",
-      email: "nhattan@gmail.com",
-      phone: "1900.6777",
-    },
-    { id: 3, name: "Lê Tố Tâm", email: "totam@gmail.com", phone: "1900.6777" },
-    {
-      id: 4,
-      name: "Nguyễn Xuân Mai",
-      email: "xuanmai@gmail.com",
-      phone: "1900.6777",
-    },
-    {
-      id: 5,
-      name: "Trần Bảo Ngọc",
-      email: "baongoc@gmail.com",
-      phone: "1900.6777",
-    },
-  ];
 
   // Định nghĩa các tab
   const tabs = [
@@ -319,9 +327,11 @@ const Dashboard = () => {
           return order;
         })
       );
-    } catch (err) {
-      console.log("error: ", err);
-      alert("Cập nhật trạng thái thất bại!");
+    } catch {
+      messageApi.open({
+        type: "error",
+        content: "Cập nhật trạng thái thất bại!",
+      });
     }
   };
 
@@ -341,6 +351,166 @@ const Dashboard = () => {
         );
       })
     : orders;
+
+  const handleAddOrderChange = (e, idx, field) => {
+    if (typeof idx === "number") {
+      // Thay đổi chi tiết sản phẩm
+      const newDetails = [...addOrderForm.chiTietDonHang];
+      newDetails[idx][field] = e.target.value;
+      setAddOrderForm({ ...addOrderForm, chiTietDonHang: newDetails });
+    } else {
+      setAddOrderForm({ ...addOrderForm, [e.target.name]: e.target.value });
+    }
+  };
+
+  const handleAddOrderProductAdd = () => {
+    setAddOrderForm({
+      ...addOrderForm,
+      chiTietDonHang: [
+        ...addOrderForm.chiTietDonHang,
+        { sanPhamId: "", soLuong: 1, giaBan: "" },
+      ],
+    });
+  };
+
+  const handleAddOrderProductRemove = (idx) => {
+    const newDetails = addOrderForm.chiTietDonHang.filter((_, i) => i !== idx);
+    setAddOrderForm({ ...addOrderForm, chiTietDonHang: newDetails });
+  };
+
+  const handleAddOrderSubmit = async (e) => {
+    e.preventDefault();
+    setAddOrderLoading(true);
+    try {
+      const data = {
+        ...addOrderForm,
+        tongTien: Number(addOrderForm.tongTien),
+        chiTietDonHang: addOrderForm.chiTietDonHang.map((item) => {
+          const product = products.find((p) => p._id === item.sanPhamId);
+          return {
+            ...item,
+            tenSanPham: product ? product.tenDH : "",
+          };
+        }),
+      };
+      await createOrderApi(data);
+      setAddModalOpen(false);
+      setAddOrderForm({
+        tenNguoiDung: "",
+        email: "",
+        sdt: "",
+        diaChi: "",
+        tongTien: "",
+        trangThaiDonHang: "Chờ xác nhận",
+        trangThaiThanhToan: "Chưa thanh toán",
+        phuongThucThanhToan: "",
+        ghiChu: "",
+        chiTietDonHang: [{ sanPhamId: "", soLuong: 1, giaBan: "" }],
+      });
+      setOrdersPage(1);
+      await fetchOrders(1);
+      messageApi.open({
+        type: "success",
+        content: "Tạo đơn hàng thành công!",
+      });
+    } catch {
+      messageApi.open({
+        type: "error",
+        content: "Tạo đơn hàng thất bại!",
+      });
+    } finally {
+      setAddOrderLoading(false);
+    }
+  };
+
+  const fetchUsers = async (page = usersPage, search = userSearch) => {
+    setUsersLoading(true);
+    try {
+      const res = await getUsersApi(page, 5, search);
+      if (res.status && res.data) {
+        setUsers(res.data.users);
+        setUsersTotalPages(res.data.pagination.totalPages);
+      } else {
+        setUsers([]);
+      }
+    } catch {
+      setUsers([]);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "customers") fetchUsers();
+    // eslint-disable-next-line
+  }, [activeTab, usersPage, userSearch]);
+
+  // Hàm mở modal sửa user
+  const handleEditUser = (user) => {
+    setEditUserForm({
+      _id: user._id,
+      tenNguoiDung: user.tenNguoiDung || "",
+      gioiTinh: user.gioiTinh || "",
+      sdt: user.sdt || "",
+    });
+    setEditUserModalOpen(true);
+  };
+
+  const handleEditUserSubmit = async () => {
+    setEditUserLoading(true);
+    try {
+      const { _id, ...updateData } = editUserForm;
+      const res = await updateUserApi({ id: _id, ...updateData });
+      if (res.status) {
+        setEditUserModalOpen(false);
+        await fetchUsers(usersPage, userSearch);
+        messageApi.open({
+          type: "success",
+          content: "Cập nhật người dùng thành công!",
+        });
+      } else {
+        messageApi.open({
+          type: "error",
+          content: res.message || "Cập nhật thất bại!",
+        });
+      }
+    } catch {
+      messageApi.open({ type: "error", content: "Cập nhật thất bại!" });
+    } finally {
+      setEditUserLoading(false);
+    }
+  };
+
+  const handleLockUser = async (userId, isActive) => {
+    try {
+      const res = await updateUserApi({ id: userId, isActive });
+      if (res.status) {
+        messageApi.open({
+          type: "success",
+          content: isActive
+            ? "Mở khóa tài khoản thành công!"
+            : "Khóa tài khoản thành công!",
+        });
+        await fetchUsers(usersPage, userSearch);
+      } else {
+        messageApi.open({
+          type: "error",
+          content:
+            res.message ||
+            (isActive
+              ? "Mở khóa tài khoản thất bại!"
+              : "Khóa tài khoản thất bại!"),
+        });
+      }
+    } catch {
+      messageApi.open({
+        type: "error",
+        content: isActive
+          ? "Có lỗi khi mở khóa tài khoản!"
+          : "Có lỗi xảy ra khi khóa tài khoản!",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex font-roboto bg-gray-100">
@@ -797,7 +967,7 @@ const Dashboard = () => {
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
                   Quản lý đơn hàng
                 </h2>
-                <div className="flex justify-end mb-4">
+                <div className="flex justify-between items-center mb-4">
                   <motion.input
                     type="text"
                     placeholder="Tìm kiếm đơn hàng..."
@@ -809,12 +979,26 @@ const Dashboard = () => {
                     }}
                     whileFocus={{ scale: 1.02, transition: { duration: 0.2 } }}
                   />
+                  <button
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium"
+                    onClick={() => setAddModalOpen(true)}
+                  >
+                    Thêm đơn hàng
+                  </button>
                 </div>
                 <div className="bg-white rounded-xl shadow-lg overflow-x-auto">
                   {ordersLoading ? (
-                    <div className="flex justify-center items-center py-10 text-lg">
-                      Đang tải dữ liệu...
-                    </div>
+                    <table className="min-w-full text-center border-separate border-spacing-y-1">
+                      <tbody>
+                        <tr>
+                          <td colSpan={7} className="py-16">
+                            <div className="flex justify-center items-center">
+                              <Spin />
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   ) : (
                     <table className="min-w-full text-center border-separate border-spacing-y-1">
                       <thead className="bg-red-700 text-white rounded-xl">
@@ -1077,51 +1261,102 @@ const Dashboard = () => {
                     type="text"
                     placeholder="Tìm kiếm khách hàng..."
                     className="border rounded-lg p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-red-700"
-                    value={searchTerm}
+                    value={userSearch}
                     onChange={(e) => {
-                      setSearchTerm(e.target.value);
+                      setUserSearch(e.target.value);
+                      setUsersPage(1);
                     }}
                     whileFocus={{ scale: 1.02, transition: { duration: 0.2 } }}
                   />
                 </div>
                 <div className="bg-white rounded-lg shadow-md overflow-x-auto">
-                  <table className="min-w-full">
-                    <thead className="bg-red-700 text-white">
-                      <tr>
-                        <th className="p-3 text-left">ID</th>
-                        <th className="p-3 text-left">Tên</th>
-                        <th className="p-3 text-left">Email</th>
-                        <th className="p-3 text-left">Số điện thoại</th>
-                        <th className="p-3 text-left">Hành động</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredCustomers.map((customer, index) => (
-                        <motion.tr
-                          key={customer.id}
-                          className="border-b hover:bg-gray-50"
-                          variants={rowVariants}
-                          initial="hidden"
-                          animate="visible"
-                          custom={index}
-                        >
-                          <td className="p-3">{customer.id}</td>
-                          <td className="p-3">{customer.name}</td>
-                          <td className="p-3">{customer.email}</td>
-                          <td className="p-3">{customer.phone}</td>
-                          <td className="p-3">
-                            <motion.button
-                              className="text-blue-500 hover:underline"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                            >
-                              Xem chi tiết
-                            </motion.button>
+                  {usersLoading ? (
+                    <table className="min-w-full text-center border-separate border-spacing-y-1">
+                      <tbody>
+                        <tr>
+                          <td colSpan={5} className="py-16">
+                            <div className="flex justify-center items-center">
+                              <Spin />
+                            </div>
                           </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
+                        </tr>
+                      </tbody>
+                    </table>
+                  ) : (
+                    <table className="min-w-full">
+                      <thead className="bg-red-700 text-white">
+                        <tr>
+                          <th className="p-3 text-left">ID</th>
+                          <th className="p-3 text-left">Tên</th>
+                          <th className="p-3 text-left">Email</th>
+                          <th className="p-3 text-left">Giới tính</th>
+                          <th className="p-3 text-left">Số điện thoại</th>
+                          <th className="p-3 text-left">Trạng thái</th>
+                          <th className="p-3 text-left">Hành động</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users.map((user, index) => (
+                          <tr
+                            key={user._id}
+                            className="border-b hover:bg-gray-50"
+                          >
+                            <td className="p-3">
+                              {(usersPage - 1) * 10 + index + 1}
+                            </td>
+                            <td className="p-3">{user.tenNguoiDung || "-"}</td>
+                            <td className="p-3">{user.email}</td>
+                            <td className="p-3">{user.gioiTinh || "-"}</td>
+                            <td className="p-3">{user.sdt}</td>
+                            <td className="p-3">
+                              {user.isActive ? "Hoạt động" : "Khóa"}
+                            </td>
+                            <td className="p-3">
+                              <button
+                                className="bg-yellow-500 text-white mr-2 cursor-pointer px-3 py-1 rounded hover:bg-yellow-600 font-medium"
+                                onClick={() => handleEditUser(user)}
+                              >
+                                Sửa
+                              </button>
+                              <button
+                                className={`px-3 py-1 rounded font-medium cursor-pointer text-white ${
+                                  user.isActive
+                                    ? "bg-red-500 hover:bg-red-600"
+                                    : "bg-blue-500 hover:bg-blue-600"
+                                }`}
+                                onClick={() =>
+                                  handleLockUser(user._id, !user.isActive)
+                                }
+                              >
+                                {user.isActive ? "Khóa" : "Mở khóa"}
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                  <div className="flex justify-between items-center p-4">
+                    <span>
+                      Trang {usersPage} / {usersTotalPages}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        disabled={usersPage === 1}
+                        onClick={() => setUsersPage(usersPage - 1)}
+                      >
+                        Trước
+                      </button>
+                      <button
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        disabled={usersPage === usersTotalPages}
+                        onClick={() => setUsersPage(usersPage + 1)}
+                      >
+                        Sau
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -1237,6 +1472,230 @@ const Dashboard = () => {
               </motion.div>
             )}
           </AnimatePresence>
+          {/* Modal thêm đơn hàng */}
+          {addModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-100 backdrop-blur-sm">
+              <form
+                className="bg-white rounded-xl shadow-lg p-6 w-full max-w-xl relative animate-fadeIn"
+                onSubmit={handleAddOrderSubmit}
+              >
+                <button
+                  className="absolute top-2 right-3 text-xl text-gray-400 hover:text-red-600"
+                  type="button"
+                  onClick={() => setAddModalOpen(false)}
+                >
+                  ×
+                </button>
+                <h3 className="text-lg font-semibold mb-4 text-center">
+                  Thêm đơn hàng mới
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    name="tenNguoiDung"
+                    value={addOrderForm.tenNguoiDung}
+                    onChange={handleAddOrderChange}
+                    required
+                    className="border rounded p-2"
+                    placeholder="Tên khách hàng"
+                  />
+                  <input
+                    name="email"
+                    value={addOrderForm.email}
+                    onChange={handleAddOrderChange}
+                    required
+                    className="border rounded p-2"
+                    placeholder="Email"
+                  />
+                  <input
+                    name="sdt"
+                    value={addOrderForm.sdt}
+                    onChange={handleAddOrderChange}
+                    required
+                    className="border rounded p-2"
+                    placeholder="Số điện thoại"
+                  />
+                  <input
+                    name="diaChi"
+                    value={addOrderForm.diaChi}
+                    onChange={handleAddOrderChange}
+                    required
+                    className="border rounded p-2"
+                    placeholder="Địa chỉ"
+                  />
+                  <input
+                    name="tongTien"
+                    value={addOrderForm.tongTien}
+                    onChange={handleAddOrderChange}
+                    required
+                    className="border rounded p-2"
+                    placeholder="Tổng tiền"
+                    type="number"
+                    min="0"
+                  />
+                  <select
+                    name="trangThaiDonHang"
+                    value={addOrderForm.trangThaiDonHang}
+                    onChange={handleAddOrderChange}
+                    className="border rounded p-2"
+                  >
+                    <option value="Chờ xác nhận">Chờ xác nhận</option>
+                    <option value="Đã xác nhận">Đã xác nhận</option>
+                    <option value="Đang giao hàng">Đang giao hàng</option>
+                    <option value="Đã giao hàng">Đã giao hàng</option>
+                    <option value="Đã hủy">Đã hủy</option>
+                  </select>
+                  <select
+                    name="trangThaiThanhToan"
+                    value={addOrderForm.trangThaiThanhToan}
+                    onChange={handleAddOrderChange}
+                    className="border rounded p-2"
+                  >
+                    <option value="Chưa thanh toán">Chưa thanh toán</option>
+                    <option value="Đã thanh toán">Đã thanh toán</option>
+                  </select>
+                  <select
+                    name="phuongThucThanhToan"
+                    value={addOrderForm.phuongThucThanhToan}
+                    onChange={handleAddOrderChange}
+                    className="border rounded p-2"
+                    required
+                  >
+                    <option value="">Chọn phương thức thanh toán</option>
+                    <option value="COD">Tiền mặt</option>
+                    <option value="MOMO">MOMO</option>
+                  </select>
+                </div>
+                <textarea
+                  name="ghiChu"
+                  value={addOrderForm.ghiChu}
+                  onChange={handleAddOrderChange}
+                  className="border rounded p-2 w-full mt-3"
+                  placeholder="Ghi chú"
+                />
+                <div className="mt-4">
+                  <h4 className="font-semibold mb-2">Sản phẩm trong đơn</h4>
+                  {addOrderForm.chiTietDonHang.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-nowrap gap-2 mb-2 items-center"
+                    >
+                      <div className="flex-1 min-w-[160px]">
+                        <select
+                          value={item.sanPhamId}
+                          onChange={(e) =>
+                            handleAddOrderChange(e, idx, "sanPhamId")
+                          }
+                          className="border rounded p-2 w-full"
+                          required
+                        >
+                          <option value="">Chọn sản phẩm</option>
+                          {products.map((p) => (
+                            <option key={p._id} value={p._id}>
+                              {p.tenDH}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="w-20">
+                        <input
+                          value={item.soLuong}
+                          onChange={(e) =>
+                            handleAddOrderChange(e, idx, "soLuong")
+                          }
+                          className="border rounded p-2 w-full"
+                          type="number"
+                          min="1"
+                          placeholder="Số lượng"
+                          required
+                        />
+                      </div>
+                      <div className="min-w-[100px]">
+                        <input
+                          value={item.giaBan}
+                          onChange={(e) =>
+                            handleAddOrderChange(e, idx, "giaBan")
+                          }
+                          className="border rounded p-2 w-full"
+                          type="number"
+                          min="0"
+                          placeholder="Giá bán"
+                          required
+                        />
+                      </div>
+                      {addOrderForm.chiTietDonHang.length > 1 && (
+                        <button
+                          type="button"
+                          className="text-red-500 font-bold"
+                          onClick={() => handleAddOrderProductRemove(idx)}
+                        >
+                          -
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="text-green-600 font-bold mt-2"
+                    onClick={handleAddOrderProductAdd}
+                  >
+                    + Thêm sản phẩm
+                  </button>
+                </div>
+                <button
+                  type="submit"
+                  className="mt-6 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 font-semibold"
+                  disabled={addOrderLoading}
+                >
+                  {addOrderLoading ? "Đang thêm..." : "Thêm đơn hàng"}
+                </button>
+              </form>
+            </div>
+          )}
+          {/* Modal sửa user */}
+          <Modal
+            title="Sửa thông tin khách hàng"
+            open={editUserModalOpen}
+            onCancel={() => setEditUserModalOpen(false)}
+            onOk={handleEditUserSubmit}
+            confirmLoading={editUserLoading}
+            okText="Lưu"
+            cancelText="Hủy"
+            centered
+          >
+            <Form layout="vertical">
+              <Form.Item label="Tên khách hàng">
+                <Input
+                  value={editUserForm.tenNguoiDung}
+                  onChange={(e) =>
+                    setEditUserForm((f) => ({
+                      ...f,
+                      tenNguoiDung: e.target.value,
+                    }))
+                  }
+                />
+              </Form.Item>
+              <Form.Item label="Giới tính">
+                <Select
+                  value={editUserForm.gioiTinh}
+                  onChange={(val) =>
+                    setEditUserForm((f) => ({ ...f, gioiTinh: val }))
+                  }
+                >
+                  <Select.Option value="Nam">Nam</Select.Option>
+                  <Select.Option value="Nữ">Nữ</Select.Option>
+                  <Select.Option value="Khác">Khác</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item label="Số điện thoại">
+                <Input
+                  value={editUserForm.sdt}
+                  onChange={(e) =>
+                    setEditUserForm((f) => ({ ...f, sdt: e.target.value }))
+                  }
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
         </main>
       </div>
     </div>

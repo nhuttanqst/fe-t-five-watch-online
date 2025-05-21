@@ -42,6 +42,12 @@ export const resetPasswordApi = ({ email, matKhau }) => {
   return axiosUser.post("/api/auth/resetPassword", { email, matKhau });
 };
 
+export const getUsersApi = (page = 1, limit = 5, search = "") => {
+  return axiosUser.get(
+    `/api/users?page=${page}&limit=${limit}&search=${search}`
+  );
+};
+
 export const createOrderApi = (data) => {
   return axiosOrder.post("/api/orders", data);
 };

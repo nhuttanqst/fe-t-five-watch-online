@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import ReactImageGallery from "react-image-gallery";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Breadcrumb, Button, Col, Input, Rate, Row, Spin } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
 import { items } from "../../data";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
-
 import useWatchesData from "../../apiservice/useWathes";
 import "react-image-gallery/styles/css/image-gallery.css";
 import "../../styles/product.detail.css";
+import { getProduct } from "../../apiservice/apiProduct";
 
 const typeMapping = {
   Nam: "Đồng Hồ Nam",
@@ -18,6 +18,7 @@ const typeMapping = {
 };
 
 const ProductDetailPage = () => {
+  const { id } = useParams();
   const { data, loading } = useWatchesData();
   const [filteredWatches, setFilteredWatches] = useState([]);
   const [type, setType] = useState("");
@@ -30,6 +31,7 @@ const ProductDetailPage = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const {
     dataViewDetail,
+    setDataViewDetail,
     addToCart,
     messageApi,
     contextHolder,
@@ -44,6 +46,21 @@ const ProductDetailPage = () => {
   }, [dataViewDetail?.category]);
 
   useEffect(() => {
+    setType(typeMapping[dataViewDetail?.danhMuc]);
+  }, [dataViewDetail?.danhMuc]);
+
+  useEffect(() => {
+    const fetchDataViewDetail = async () => {
+      const res = await getProduct(id);
+      if (res.productData) {
+        setDataViewDetail(res.productData);
+      }
+    };
+
+    fetchDataViewDetail();
+  }, []);
+
+  useEffect(() => {
     if (dataViewDetail) {
       const imagesArr =
         dataViewDetail.images?.map((image) => ({
@@ -51,7 +68,14 @@ const ProductDetailPage = () => {
           thumbnail: image,
           originalClass: "original-image",
           thumbnailClass: "thumbnail-image",
-        })) || [];
+        })) ||
+        dataViewDetail.hinhAnh?.map((image) => ({
+          original: image.duLieuAnh,
+          thumbnail: image.duLieuAnh,
+          originalClass: "original-image",
+          thumbnailClass: "thumbnail-image",
+        })) ||
+        [];
 
       setImages(imagesArr);
     }
@@ -59,15 +83,23 @@ const ProductDetailPage = () => {
 
   // Lọc sản phẩm tương tự theo category
   useEffect(() => {
-
-    if (dataViewDetail?.category && !loading && data ) {
+    if (dataViewDetail?.category && !loading && data) {
       const allWatches = [...data.male, ...data.female, ...data.couple];
       const similarWatches = allWatches.filter(
-
         (watch) =>
           watch.category === dataViewDetail.category &&
           watch.id !== dataViewDetail.id
       );
+      setFilteredWatches(similarWatches);
+    }
+    if (dataViewDetail?.danhMuc && !loading && data) {
+      const allWatches = [...data.male, ...data.female, ...data.couple];
+      const similarWatches = allWatches.filter(
+        (watch) =>
+          watch.category === dataViewDetail.danhMuc &&
+          watch.id !== dataViewDetail._id
+      );
+
       setFilteredWatches(similarWatches);
     }
   }, [dataViewDetail?.category, data, loading, dataViewDetail?.id]);
@@ -155,7 +187,9 @@ const ProductDetailPage = () => {
           <Breadcrumb.Item>
             <Link to="/">{type}</Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>{dataViewDetail.name}</Breadcrumb.Item>
+          <Breadcrumb.Item>
+            {dataViewDetail.name || dataViewDetail.tenDH}
+          </Breadcrumb.Item>
         </Breadcrumb>
 
         <Row className="mt-6 mx-20" gutter={[30, 30]}>
@@ -174,11 +208,13 @@ const ProductDetailPage = () => {
 
           <Col span={16}>
             <h1 className="text-2xl font-bold text-[#676767] text-justify">
-              {dataViewDetail.name}
+              {dataViewDetail.name || dataViewDetail.tenDH}
             </h1>
             <h2 className="text-4xl text-[#C40D2E] mt-4">
-              {dataViewDetail?.price
-                ? dataViewDetail.price.toLocaleString("vi-VN", {
+              {dataViewDetail?.price || dataViewDetail?.giaBan
+                ? (
+                    dataViewDetail.price || dataViewDetail.giaBan
+                  ).toLocaleString("vi-VN", {
                     style: "currency",
                     currency: "VND",
                   })
@@ -210,8 +246,10 @@ const ProductDetailPage = () => {
             <div className="mt-4">
               <span className="text-lg font-semibold">Tổng tiền: </span>
               <span className="text-xl text-[#C40D2E] font-bold">
-                {dataViewDetail?.price
-                  ? (dataViewDetail.price * quantity).toLocaleString("vi-VN", {
+                {dataViewDetail?.price || dataViewDetail?.giaBan
+                  ? (
+                      (dataViewDetail.price || dataViewDetail.giaBan) * quantity
+                    ).toLocaleString("vi-VN", {
                       style: "currency",
                       currency: "VND",
                     })
