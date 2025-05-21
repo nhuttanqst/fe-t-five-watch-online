@@ -22,6 +22,7 @@ import {
   deleteBrand,
   toggleBrandVisibility,
 } from "../../apiservice/apiBrand";
+import { useCurrentApp } from "../../context/app.context";
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
   CategoryScale,
@@ -34,6 +35,11 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const {
+     
+      user,
+      
+    } = useCurrentApp();
   const [activeTab, setActiveTab] = useState("overview");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -353,8 +359,8 @@ const fetchProducts = async () => {
               className="h-10 w-10 rounded-full"
             />
             <div>
-              <p className="text-sm font-medium text-gray-700">Vũ Minh Thuan</p>
-              <p className="text-xs text-gray-500">Admin</p>
+              <p className="text-sm font-medium text-gray-700">{user.tenNguoiDung}</p>
+              <p className="text-xs text-gray-500">{user.quyen.tenQuyen}</p>
             </div>
           </div>
         </div>
@@ -406,8 +412,9 @@ const fetchProducts = async () => {
               className="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={()=>{navigate("/");}}
             >
-              Đăng xuất
+              Quay về Trang Chủ
             </motion.button>
           </div>
         </header>
