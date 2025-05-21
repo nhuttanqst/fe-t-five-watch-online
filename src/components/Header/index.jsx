@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Badge, Dropdown } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import { logoutApi } from "../../services/api";
@@ -98,7 +98,15 @@ const Header = () => {
       label: "Đăng xuất",
       onClick: handleLogout,
     },
+    
+
   ];
+  if (user?.quyen.tenQuyen === 'ADMIN') {
+        items.unshift({
+            label: <Link to='/admin'>Trang quản trị</Link>,
+            key: 'admin',
+        })
+    }
 
   return (
     <header className="w-full border-b-2 border-b-[#EDEDED] bg-white">
