@@ -29,7 +29,7 @@ import {
 } from "../../services/api";
 import { Drawer, Spin, Modal, Form, Input, Select } from "antd";
 import { useCurrentApp } from "../../context/app.context";
-import { CloseOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
