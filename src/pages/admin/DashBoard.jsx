@@ -11,7 +11,6 @@ import {
   ArcElement,
 } from "chart.js";
 import { motion, AnimatePresence } from "framer-motion";
-import TFiveLogo from "../../assets/loggo.png";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct } from "../../apiservice/apiProduct";
 import {
@@ -54,6 +53,7 @@ const Dashboard = () => {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersPage, setOrdersPage] = useState(1);
   const [ordersTotalPages, setOrdersTotalPages] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [orderDetail, setOrderDetail] = useState(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -74,6 +74,7 @@ const Dashboard = () => {
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersPage, setUsersPage] = useState(1);
   const [usersTotalPages, setUsersTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
   const [userSearch, setUserSearch] = useState("");
   const [editUserModalOpen, setEditUserModalOpen] = useState(false);
   const [editUserLoading, setEditUserLoading] = useState(false);
@@ -219,6 +220,7 @@ const Dashboard = () => {
       if (res.data && res.status) {
         setOrders(res.data.orders);
         setOrdersTotalPages(res.data.totalPages);
+        setTotalOrders(res.data.total);
       } else {
         setOrders([]);
       }
@@ -271,7 +273,7 @@ const Dashboard = () => {
     { label: "Sản phẩm", value: "products", icon: "🕒" },
     { label: "Thương Hiệu", value: "brands", icon: "📦" },
     { label: "Đơn hàng", value: "orders", icon: "📦" },
-    { label: "Khách hàng", value: "customers", icon: "👥" },
+    { label: "Người dùng", value: "customers", icon: "👥" },
     { label: "Thống kê", value: "analytics", icon: "📈" },
   ];
 
@@ -433,6 +435,7 @@ const Dashboard = () => {
       if (res.status && res.data) {
         setUsers(res.data.users);
         setUsersTotalPages(res.data.pagination.totalPages);
+        setTotalUsers(res.data.pagination.totalUsers);
       } else {
         setUsers([]);
       }
@@ -444,7 +447,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (activeTab === "customers") fetchUsers();
+    fetchUsers();
     // eslint-disable-next-line
   }, [activeTab, usersPage, userSearch]);
 
@@ -529,7 +532,7 @@ const Dashboard = () => {
         <div className="p-4 border-t">
           <div className="flex items-center gap-3">
             <img
-              src={TFiveLogo}
+              src={user.avatar}
               alt="Admin Avatar"
               className="h-10 w-10 rounded-full"
             />
@@ -611,7 +614,7 @@ const Dashboard = () => {
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800">
                   Tổng quan
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   {[
                     {
                       icon: "💰",
@@ -622,24 +625,17 @@ const Dashboard = () => {
                     },
                     {
                       icon: "👥",
-                      title: "Tổng khách hàng",
-                      value: "1,200",
+                      title: "Tổng người dùng",
+                      value: totalUsers,
                       change: "↑ 16% so với tháng trước",
                       changeColor: "text-green-500",
                     },
                     {
                       icon: "📦",
                       title: "Tổng đơn hàng",
-                      value: "320",
+                      value: totalOrders,
                       change: "↑ 8% so với tháng trước",
                       changeColor: "text-green-500",
-                    },
-                    {
-                      icon: "📈",
-                      title: "Tổng lợi nhuận",
-                      value: "650,000,000 đ",
-                      change: "↓ 5% so với tháng trước",
-                      changeColor: "text-red-500",
                     },
                   ].map((card, index) => (
                     <motion.div
@@ -1326,12 +1322,12 @@ const Dashboard = () => {
                 transition={{ duration: 0.3 }}
               >
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-                  Quản lý khách hàng
+                  Quản lý người dùng
                 </h2>
                 <div className="flex justify-between items-center mb-4">
                   <motion.input
                     type="text"
-                    placeholder="Tìm kiếm khách hàng..."
+                    placeholder="Tìm kiếm người dùng..."
                     className="border rounded-lg p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-red-700"
                     value={userSearch}
                     onChange={(e) => {
@@ -1374,7 +1370,7 @@ const Dashboard = () => {
                             className="border-b hover:bg-gray-50"
                           >
                             <td className="p-3">
-                              {(usersPage - 1) * 10 + index + 1}
+                              {(usersPage - 1) * itemsPerPage + index + 1}
                             </td>
                             <td className="p-3">{user.tenNguoiDung || "-"}</td>
                             <td className="p-3">{user.email}</td>
@@ -1568,7 +1564,7 @@ const Dashboard = () => {
                     onChange={handleAddOrderChange}
                     required
                     className="border rounded p-2"
-                    placeholder="Tên khách hàng"
+                    placeholder="Tên người dùng"
                   />
                   <input
                     name="email"
@@ -1725,7 +1721,7 @@ const Dashboard = () => {
           )}
           {/* Modal sửa user */}
           <Modal
-            title="Sửa thông tin khách hàng"
+            title="Sửa thông tin người dùng"
             open={editUserModalOpen}
             onCancel={() => setEditUserModalOpen(false)}
             onOk={handleEditUserSubmit}
@@ -1735,7 +1731,7 @@ const Dashboard = () => {
             centered
           >
             <Form layout="vertical">
-              <Form.Item label="Tên khách hàng">
+              <Form.Item label="Tên người dùng">
                 <Input
                   value={editUserForm.tenNguoiDung}
                   onChange={(e) =>

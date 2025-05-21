@@ -50,11 +50,11 @@ export const AppProvider = ({ children }) => {
 
   const addToCart = (product, quantity) => {
     setCarts((prevCarts) => {
-      const existingItem = prevCarts.find((item) => item.id === product.id);
+      const existingItem = prevCarts.find((item) => item._id === product._id);
 
       if (existingItem) {
         const newCarts = prevCarts.map((item) =>
-          item.id === product.id
+          item._id === product._id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
@@ -72,7 +72,7 @@ export const AppProvider = ({ children }) => {
 
   const removeFromCart = (productId) => {
     setCarts((prevCarts) => {
-      const newCarts = prevCarts.filter((item) => item.id !== productId);
+      const newCarts = prevCarts.filter((item) => item._id !== productId);
       localStorage.setItem("carts", JSON.stringify(newCarts));
       return newCarts;
     });
@@ -81,7 +81,7 @@ export const AppProvider = ({ children }) => {
   const updateCartItemQuantity = (productId, quantity) => {
     setCarts((prevCarts) => {
       const newCarts = prevCarts.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
+        item._id === productId ? { ...item, quantity } : item
       );
       localStorage.setItem("carts", JSON.stringify(newCarts));
       return newCarts;

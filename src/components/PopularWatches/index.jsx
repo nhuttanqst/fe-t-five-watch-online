@@ -3,11 +3,10 @@ import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useCurrentApp } from "../../context/app.context";
 
 const PopularWatches = ({ watches, title, mx, px }) => {
-  const { setDataViewDetail, favorite, toggleFavorite } = useCurrentApp();
+  const { favorite, toggleFavorite } = useCurrentApp();
   const navigate = useNavigate();
 
   const handleViewDetail = (watch) => {
-    setDataViewDetail(watch);
     navigate(`/product/${watch.id}`);
   };
 

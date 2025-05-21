@@ -35,14 +35,14 @@ const CartPage = () => {
   }, [user]);
 
   const handleIncreaseQuantity = (itemId) => {
-    const item = carts.find((item) => item.id === itemId);
+    const item = carts.find((item) => item._id === itemId);
     if (item) {
       updateCartItemQuantity(itemId, item.quantity + 1);
     }
   };
 
   const handleDecreaseQuantity = (itemId) => {
-    const item = carts.find((item) => item.id === itemId);
+    const item = carts.find((item) => item._id === itemId);
     if (item && item.quantity > 1) {
       updateCartItemQuantity(itemId, item.quantity - 1);
     } else {
@@ -64,9 +64,10 @@ const CartPage = () => {
   const calculateTotal = () => {
     return carts.reduce((total, item) => {
       const priceNumber =
-        typeof item.price === "string"
-          ? Number(item.price.replace(/[^\d]/g, ""))
-          : item.price;
+        typeof item.price === "string" || typeof item.giaBan === "string"
+          ? Number(item.price.replace(/[^\d]/g, "")) ||
+            Number(item.giaBan.replace(/[^\d]/g, ""))
+          : item.price || item.giaBan;
 
       return total + priceNumber * item.quantity;
     }, 0);
@@ -76,10 +77,10 @@ const CartPage = () => {
     setIsSubmit(true);
 
     const chiTietDonHang = carts.map((cart) => ({
-      sanPhamId: cart.id,
-      tenSanPham: cart.name,
+      sanPhamId: cart.id || cart._id,
+      tenSanPham: cart.name || cart.tenDH,
       soLuong: cart.quantity,
-      giaBan: cart.price,
+      giaBan: cart.price || cart.giaBan,
     }));
 
     const order = {
@@ -142,44 +143,44 @@ const CartPage = () => {
                 >
                   <div className="flex items-center space-x-4">
                     <img
-                      src={item.images?.[0] || item.image}
+                      src={item.images?.[0] || item.hinhAnh[0].duLieuAnh}
                       alt={item.name}
                       className="w-40 h-40 object-cover"
                     />
                     <div className="flex flex-col justify-between">
                       <span className="font-semibold text-2xl">
-                        {item.name}
+                        {item.name || item.tenDH}
                       </span>
                       <div className="flex items-center gap-4 mt-6">
                         <div className="flex items-center space-x-4">
                           <button
-                            onClick={() => handleDecreaseQuantity(item.id)}
+                            onClick={() => handleDecreaseQuantity(item._id)}
                             className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105"
                           >
                             -
                           </button>
                           <span className="text-xl">{item.quantity}</span>
                           <button
-                            onClick={() => handleIncreaseQuantity(item.id)}
+                            onClick={() => handleIncreaseQuantity(item._id)}
                             className="flex items-center justify-center cursor-pointer text-xl w-6 h-6 border border-gray-500 rounded-sm px-2 py-2 transition duration-200 ease-in-out transform hover:scale-105"
                           >
                             +
                           </button>
                         </div>
                         <span className="text-black font-semibold text-xl ml-3">
-                          {item.price}
+                          {item.price || item.giaBan}
                         </span>
                       </div>
                       <div className="flex items-center space-x-6 mt-8">
                         <div
-                          onClick={() => handleRemoveItem(item.id)}
+                          onClick={() => handleRemoveItem(item._id)}
                           className="flex items-center justify-center border border-gray-500 w-6 h-6 rounded-full text-sm cursor-pointer"
                         >
                           <DeleteOutlined />
                         </div>
                         <span
                           className="cursor-pointer transition-all duration-300 hover:text-red-400"
-                          onClick={() => handleRemoveItem(item.id)}
+                          onClick={() => handleRemoveItem(item._id)}
                         >
                           Xóa
                         </span>

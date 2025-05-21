@@ -83,15 +83,6 @@ const ProductDetailPage = () => {
 
   // Lọc sản phẩm tương tự theo category
   useEffect(() => {
-    if (dataViewDetail?.category && !loading && data) {
-      const allWatches = [...data.male, ...data.female, ...data.couple];
-      const similarWatches = allWatches.filter(
-        (watch) =>
-          watch.category === dataViewDetail.category &&
-          watch.id !== dataViewDetail.id
-      );
-      setFilteredWatches(similarWatches);
-    }
     if (dataViewDetail?.danhMuc && !loading && data) {
       const allWatches = [...data.male, ...data.female, ...data.couple];
       const similarWatches = allWatches.filter(
@@ -102,7 +93,7 @@ const ProductDetailPage = () => {
 
       setFilteredWatches(similarWatches);
     }
-  }, [dataViewDetail?.category, data, loading, dataViewDetail?.id]);
+  }, [dataViewDetail?.danhMuc, data, loading, dataViewDetail?._id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -131,7 +122,14 @@ const ProductDetailPage = () => {
     }
 
     if (dataViewDetail) {
-      addToCart(dataViewDetail, quantity);
+      addToCart(
+        {
+          ...dataViewDetail,
+          _id: dataViewDetail._id,
+        },
+        quantity
+      );
+
       messageApi.open({
         type: "success",
         content: "Thêm vào giỏ hàng thành công!",
@@ -147,7 +145,7 @@ const ProductDetailPage = () => {
     setSubmitLoading(true);
     try {
       await addReviewApi({
-        product: dataViewDetail.id,
+        product: dataViewDetail._id,
         star: newStar,
         comment: newComment,
       });
@@ -155,7 +153,7 @@ const ProductDetailPage = () => {
       setNewStar(0);
       setNewComment("");
       setReviewLoading(true);
-      const res = await fetchReviewsByProduct(dataViewDetail.id);
+      const res = await fetchReviewsByProduct(dataViewDetail._id);
       if (res.success) setReviews(res.data);
     } catch (error) {
       console.error(error);
@@ -167,14 +165,14 @@ const ProductDetailPage = () => {
   };
 
   useEffect(() => {
-    if (dataViewDetail?.id) {
+    if (dataViewDetail?._id) {
       setReviewLoading(true);
-      fetchReviewsByProduct(dataViewDetail.id)
+      fetchReviewsByProduct(dataViewDetail._id)
         .then((res) => res.success && setReviews(res.data))
         .catch((err) => console.error(err))
         .finally(() => setReviewLoading(false));
     }
-  }, [dataViewDetail?.id]);
+  }, [dataViewDetail?._id]);
 
   return (
     <>
