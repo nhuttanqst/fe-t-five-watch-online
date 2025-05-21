@@ -83,6 +83,7 @@ const Dashboard = () => {
     gioiTinh: "",
     sdt: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { messageApi } = useCurrentApp();
 
@@ -514,6 +515,13 @@ const Dashboard = () => {
     }
   };
 
+  const paginate = (data) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return data.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const totalPages = (data) => Math.ceil(data.length / itemsPerPage);
+
   return (
     <div className="min-h-screen flex font-roboto bg-gray-100">
       {/* Sidebar */}
@@ -752,6 +760,7 @@ const Dashboard = () => {
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
+                      setCurrentPage(1);
                     }}
                     whileFocus={{ scale: 1.02, transition: { duration: 0.2 } }}
                   />
@@ -779,7 +788,7 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredProducts.map((product, index) => (
+                      {paginate(filteredProducts).map((product, index) => (
                         <motion.tr
                           key={product._id}
                           className="border-b hover:bg-gray-50"
@@ -836,6 +845,31 @@ const Dashboard = () => {
                       ))}
                     </tbody>
                   </table>
+                  <div className="flex justify-between items-center p-4">
+                    <span>
+                      Trang {currentPage} / {totalPages(filteredProducts)}
+                    </span>
+                    <div className="flex gap-2">
+                      <motion.button
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Trước
+                      </motion.button>
+                      <motion.button
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        disabled={currentPage === totalPages(filteredProducts)}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Sau
+                      </motion.button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -892,6 +926,7 @@ const Dashboard = () => {
                       value={searchTerm}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
+                        setCurrentPage(1);
                       }}
                       whileFocus={{
                         scale: 1.02,
@@ -911,7 +946,7 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredBrands.map((brand, index) => (
+                      {paginate(filteredBrands).map((brand, index) => (
                         <motion.tr
                           key={brand._id}
                           className="border-b hover:bg-gray-50"
@@ -945,7 +980,12 @@ const Dashboard = () => {
                             <motion.button
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
-                              onClick={() => handleToggleVisibility(brand._id)}
+                              onClick={() =>
+                                handleToggleVisibility(
+                                  brand._id,
+                                  brand.isVisible
+                                )
+                              }
                               className={`${
                                 brand.isVisible ? "bg-gray-500" : "bg-green-500"
                               } text-white px-3 py-1 rounded ml-2 cursor-pointer hover:${
@@ -959,6 +999,31 @@ const Dashboard = () => {
                       ))}
                     </tbody>
                   </table>
+                  <div className="flex justify-between items-center p-4">
+                    <span>
+                      Trang {currentPage} / {totalPages(filteredBrands)}
+                    </span>
+                    <div className="flex gap-2">
+                      <motion.button
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Trước
+                      </motion.button>
+                      <motion.button
+                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                        disabled={currentPage === totalPages(filteredBrands)}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Sau
+                      </motion.button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
