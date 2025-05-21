@@ -58,6 +58,14 @@ export const getOrdersApi = (page = 1, limit = 10) => {
   return axiosOrder.get(`/api/orders?page=${page}&limit=${limit}`);
 };
 
+export const getAllOrdersApi = (page = 1, limit = 10) => {
+  return axiosOrder.get(`/api/orders/all?page=${page}&limit=${limit}`);
+};
+
+export const updateOrderStatusApi = (orderId, trangThaiDonHang) => {
+  return axiosOrder.put(`/api/orders/${orderId}/status`, { trangThaiDonHang });
+};
+
 export const fetchReviewsByProduct = (productId) => {
   return axiosReview.get(`/api/reviews/product/${productId}`);
 };

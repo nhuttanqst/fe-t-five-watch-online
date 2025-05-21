@@ -14,7 +14,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import TFiveLogo from "../../assets/loggo.png";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct } from "../../apiservice/apiProduct";
-
 import {
   getBrands,
   createBrand,
@@ -22,7 +21,12 @@ import {
   deleteBrand,
   toggleBrandVisibility,
 } from "../../apiservice/apiBrand";
+
 import { useCurrentApp } from "../../context/app.context";
+
+import { getAllOrdersApi, updateOrderStatusApi } from "../../services/api";
+import { Drawer } from "antd";
+
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
   CategoryScale,
@@ -42,22 +46,24 @@ const Dashboard = () => {
     } = useCurrentApp();
   const [activeTab, setActiveTab] = useState("overview");
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //CALL API Sản Phẩm VÀ Thương Hiệu
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]); // State để lưu trữ thông tin thương hiệu (id: name)
   const [brandFormData, setBrandFormData] = useState({ ten: "" });
   const [editingBrandId, setEditingBrandId] = useState(null);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [ordersTotalPages, setOrdersTotalPages] = useState(1);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [orderDetail, setOrderDetail] = useState(null);
+
+  const itemsPerPage = 5;
 
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
-      await fetchBrandsData(); // Lấy thông tin thương hiệu
+      await fetchBrandsData();
       await fetchProducts();
     };
     fetchData();
@@ -69,14 +75,11 @@ const Dashboard = () => {
       console.log("Brands API Response:", response);
       if (response && Array.isArray(response.brands)) {
         setBrands(response.brands);
-        setError(null);
       } else {
-        setError("Không có dữ liệu thương hiệu trả về từ API.");
         setBrands([]);
       }
     } catch (err) {
       console.error("Fetch Brands Error:", err);
-      setError(err.message || "Có lỗi xảy ra khi lấy dữ liệu thương hiệu.");
       setBrands([]);
     }
   };
@@ -85,24 +88,19 @@ const Dashboard = () => {
     return brand ? brand.ten : "Không xác định";
   };
 
-const fetchProducts = async () => {
-  try {
-    const response = await getProducts(1, 30);
-    console.log("Products API Response:", response);
-    if (response && response.productDatas) {
-      setProducts(response.productDatas);
-      setError(null);
-    } else {
-      setError("Không có dữ liệu sản phẩm trả về từ API.");
-      setProducts([]);
+  const fetchProducts = async () => {
+    try {
+      const response = await getProducts(1, 30);
+      console.log("Products API Response:", response);
+      if (response && response.productDatas) {
+        setProducts(response.productDatas);
+      } else {
+        setProducts([]);
+      }
+    } catch (err) {
+      console.error("Fetch Products Error:", err);
     }
-    setSuccess(null);
-  } catch (err) {
-    console.error("Fetch Products Error:", err);
-    setError(err.message || "Có lỗi xảy ra khi lấy dữ liệu sản phẩm.");
-    setSuccess(null);
-  }
-};
+  };
 
   const handleEdit = (product) => {
     navigate(`/admin/edit/${product._id}`);
@@ -111,18 +109,13 @@ const fetchProducts = async () => {
   const handleDelete = async (productId) => {
     if (window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) {
       try {
-        await deleteProduct(productId); // Gọi API xóa sản phẩm
+        await deleteProduct(productId);
         setProducts(products.filter((p) => p._id !== productId));
-        setSuccess("Xóa sản phẩm thành công");
-        setError(null);
       } catch (err) {
-        setError(err.message);
-        setSuccess(null);
+        console.log(err);
       }
     }
   };
-
-  //Xử lý thương hiệu
 
   const handleBrandInputChange = (e) => {
     setBrandFormData({ ten: e.target.value });
@@ -131,7 +124,6 @@ const fetchProducts = async () => {
   const handleBrandSubmit = async (e) => {
     e.preventDefault();
     if (!brandFormData.ten.trim()) {
-      setError("Tên thương hiệu là bắt buộc");
       return;
     }
     try {
@@ -142,26 +134,20 @@ const fetchProducts = async () => {
             brand._id === editingBrandId ? response.brand : brand
           )
         );
-        setSuccess("Cập nhật thương hiệu thành công");
       } else {
         const response = await createBrand(brandFormData);
         setBrands([...brands, response.brand]);
-        setSuccess("Tạo thương hiệu thành công");
       }
       setBrandFormData({ ten: "" });
       setEditingBrandId(null);
-      setError(null);
     } catch (err) {
-      setError(err.message || "Có lỗi xảy ra khi lưu thương hiệu.");
-      setSuccess(null);
+      console.log(err);
     }
   };
 
   const handleEditBrand = (brand) => {
     setBrandFormData({ ten: brand.ten });
     setEditingBrandId(brand._id);
-    setError(null);
-    setSuccess(null);
   };
 
   const handleDeleteBrand = async (brandId) => {
@@ -169,11 +155,8 @@ const fetchProducts = async () => {
       try {
         await deleteBrand(brandId);
         setBrands(brands.filter((brand) => brand._id !== brandId));
-        setSuccess("Xóa thương hiệu thành công");
-        setError(null);
       } catch (err) {
-        setError(err.message || "Có lỗi xảy ra khi xóa thương hiệu.");
-        setSuccess(null);
+        console.log(err);
       }
     }
   };
@@ -181,8 +164,6 @@ const fetchProducts = async () => {
   const handleCancelEditBrand = () => {
     setBrandFormData({ ten: "" });
     setEditingBrandId(null);
-    setError(null);
-    setSuccess(null);
   };
 
   const filteredBrands = Array.isArray(brands)
@@ -191,77 +172,38 @@ const fetchProducts = async () => {
       )
     : [];
 
-  const handleToggleVisibility = async (brandId, isVisible) => {
+  const handleToggleVisibility = async (brandId) => {
     try {
       const response = await toggleBrandVisibility(brandId);
       setBrands(
         brands.map((brand) => (brand._id === brandId ? response.brand : brand))
       );
-      setSuccess(
-        `Thương hiệu đã được ${response.brand.isVisible ? "hiển thị" : "ẩn"}`
-      );
-      setError(null);
     } catch (err) {
-      setError(err.message);
-      setSuccess(null);
+      console.log(err);
     }
   };
-  //////////////////////////////////////////////////////////////////////////////
-  const orders = [
-    {
-      id: 1,
-      customer: "Vũ Minh Thuan",
-      total: "25,000,000 đ",
-      status: "Đã giao",
-    },
-    {
-      id: 2,
-      customer: "Ngô Nhật Tân",
-      total: "1,700,000 đ",
-      status: "Đang xử lý",
-    },
-    { id: 3, customer: "Lê Tố Tâm", total: "1,800,000 đ", status: "Đã giao" },
-    {
-      id: 4,
-      customer: "Nguyễn Xuân Mai",
-      total: "2,800,000 đ",
-      status: "Đang xử lý",
-    },
-    {
-      id: 5,
-      customer: "Trần Bảo Ngọc",
-      total: "3,200,000 đ",
-      status: "Đã giao",
-    },
-  ];
 
-  const customers = [
-    {
-      id: 1,
-      name: "Vũ Minh Thuan",
-      email: "minhthuan2020@gmail.com",
-      phone: "1900.6777",
-    },
-    {
-      id: 2,
-      name: "Ngô Nhật Tân",
-      email: "nhattan@gmail.com",
-      phone: "1900.6777",
-    },
-    { id: 3, name: "Lê Tố Tâm", email: "totam@gmail.com", phone: "1900.6777" },
-    {
-      id: 4,
-      name: "Nguyễn Xuân Mai",
-      email: "xuanmai@gmail.com",
-      phone: "1900.6777",
-    },
-    {
-      id: 5,
-      name: "Trần Bảo Ngọc",
-      email: "baongoc@gmail.com",
-      phone: "1900.6777",
-    },
-  ];
+  // Lấy danh sách đơn hàng từ API
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setOrdersLoading(true);
+      try {
+        const res = await getAllOrdersApi(ordersPage, itemsPerPage);
+        if (res.data && res.status) {
+          setOrders(res.data.orders);
+          setOrdersTotalPages(res.data.totalPages);
+        } else {
+          setOrders([]);
+        }
+      } catch (err) {
+        console.log(err);
+        setOrders([]);
+      } finally {
+        setOrdersLoading(false);
+      }
+    };
+    fetchOrders();
+  }, [ordersPage, itemsPerPage]);
 
   // Dữ liệu biểu đồ
   const barData = {
@@ -293,25 +235,33 @@ const fetchProducts = async () => {
     product.tenDH.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredOrders = orders.filter(
-    (order) =>
-      order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.total.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Phân trang
-  const paginate = (data) => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return data.slice(startIndex, startIndex + itemsPerPage);
-  };
-
-  const totalPages = (data) => Math.ceil(data.length / itemsPerPage);
+  const filteredCustomers = [
+    {
+      id: 1,
+      name: "Vũ Minh Thuan",
+      email: "minhthuan2020@gmail.com",
+      phone: "1900.6777",
+    },
+    {
+      id: 2,
+      name: "Ngô Nhật Tân",
+      email: "nhattan@gmail.com",
+      phone: "1900.6777",
+    },
+    { id: 3, name: "Lê Tố Tâm", email: "totam@gmail.com", phone: "1900.6777" },
+    {
+      id: 4,
+      name: "Nguyễn Xuân Mai",
+      email: "xuanmai@gmail.com",
+      phone: "1900.6777",
+    },
+    {
+      id: 5,
+      name: "Trần Bảo Ngọc",
+      email: "baongoc@gmail.com",
+      phone: "1900.6777",
+    },
+  ];
 
   // Định nghĩa các tab
   const tabs = [
@@ -347,6 +297,60 @@ const fetchProducts = async () => {
     }),
   };
 
+  const handleOrdersPrev = () => {
+    if (ordersPage > 1) {
+      setOrdersPage(ordersPage - 1);
+    }
+  };
+
+  const handleOrdersNext = () => {
+    if (ordersPage < ordersTotalPages) {
+      setOrdersPage(ordersPage + 1);
+    }
+  };
+
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatusApi(orderId, newStatus);
+      setOrders((prev) =>
+        prev.map((order) => {
+          if (order._id === orderId) {
+            // Nếu chuyển sang 'Đã giao hàng' thì cập nhật trạng thái thanh toán luôn
+            if (newStatus === "Đã giao hàng") {
+              return {
+                ...order,
+                trangThaiDonHang: newStatus,
+                trangThaiThanhToan: "Đã thanh toán",
+              };
+            }
+            return { ...order, trangThaiDonHang: newStatus };
+          }
+          return order;
+        })
+      );
+    } catch (err) {
+      console.log("error: ", err);
+      alert("Cập nhật trạng thái thất bại!");
+    }
+  };
+
+  // Lọc đơn hàng theo searchTerm trên trang hiện tại
+  const filteredOrders = searchTerm.trim()
+    ? orders.filter((order) => {
+        const keyword = searchTerm.toLowerCase();
+        return (
+          (order.tenNguoiDung &&
+            order.tenNguoiDung.toLowerCase().includes(keyword)) ||
+          (order.trangThaiDonHang &&
+            order.trangThaiDonHang.toLowerCase().includes(keyword)) ||
+          (order.trangThaiThanhToan &&
+            order.trangThaiThanhToan.toLowerCase().includes(keyword)) ||
+          (order.sdt && order.sdt.toLowerCase().includes(keyword)) ||
+          (order.email && order.email.toLowerCase().includes(keyword))
+        );
+      })
+    : orders;
+
   return (
     <div className="min-h-screen flex font-roboto bg-gray-100">
       {/* Sidebar */}
@@ -376,7 +380,6 @@ const fetchProducts = async () => {
                 }`}
                 onClick={() => {
                   setActiveTab(tab.value);
-                  setCurrentPage(1);
                   setSearchTerm("");
                 }}
                 whileHover={{ scale: 1.02 }}
@@ -582,7 +585,6 @@ const fetchProducts = async () => {
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
-                      setCurrentPage(1);
                     }}
                     whileFocus={{ scale: 1.02, transition: { duration: 0.2 } }}
                   />
@@ -610,7 +612,7 @@ const fetchProducts = async () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {paginate(filteredProducts).map((product, index) => (
+                      {filteredProducts.map((product, index) => (
                         <motion.tr
                           key={product._id}
                           className="border-b hover:bg-gray-50"
@@ -667,31 +669,6 @@ const fetchProducts = async () => {
                       ))}
                     </tbody>
                   </table>
-                  <div className="flex justify-between items-center p-4">
-                    <span>
-                      Trang {currentPage} / {totalPages(filteredProducts)}
-                    </span>
-                    <div className="flex gap-2">
-                      <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Trước
-                      </motion.button>
-                      <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === totalPages(filteredProducts)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Sau
-                      </motion.button>
-                    </div>
-                  </div>
                 </div>
               </motion.div>
             )}
@@ -748,7 +725,6 @@ const fetchProducts = async () => {
                       value={searchTerm}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
-                        setCurrentPage(1);
                       }}
                       whileFocus={{
                         scale: 1.02,
@@ -768,7 +744,7 @@ const fetchProducts = async () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {paginate(filteredBrands).map((brand, index) => (
+                      {filteredBrands.map((brand, index) => (
                         <motion.tr
                           key={brand._id}
                           className="border-b hover:bg-gray-50"
@@ -802,12 +778,7 @@ const fetchProducts = async () => {
                             <motion.button
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
-                              onClick={() =>
-                                handleToggleVisibility(
-                                  brand._id,
-                                  brand.isVisible
-                                )
-                              }
+                              onClick={() => handleToggleVisibility(brand._id)}
                               className={`${
                                 brand.isVisible ? "bg-gray-500" : "bg-green-500"
                               } text-white px-3 py-1 rounded ml-2 cursor-pointer hover:${
@@ -821,31 +792,6 @@ const fetchProducts = async () => {
                       ))}
                     </tbody>
                   </table>
-                  <div className="flex justify-between items-center p-4">
-                    <span>
-                      Trang {currentPage} / {totalPages(filteredBrands)}
-                    </span>
-                    <div className="flex gap-2">
-                      <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Trước
-                      </motion.button>
-                      <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === totalPages(filteredBrands)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Sau
-                      </motion.button>
-                    </div>
-                  </div>
                 </div>
               </motion.div>
             )}
@@ -858,10 +804,10 @@ const fetchProducts = async () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
                   Quản lý đơn hàng
                 </h2>
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-end mb-4">
                   <motion.input
                     type="text"
                     placeholder="Tìm kiếm đơn hàng..."
@@ -869,68 +815,242 @@ const fetchProducts = async () => {
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
-                      setCurrentPage(1);
+                      setOrdersPage(1);
                     }}
                     whileFocus={{ scale: 1.02, transition: { duration: 0.2 } }}
                   />
                 </div>
-                <div className="bg-white rounded-lg shadow-md overflow-x-auto">
-                  <table className="min-w-full">
-                    <thead className="bg-red-700 text-white">
-                      <tr>
-                        <th className="p-3 text-left">ID</th>
-                        <th className="p-3 text-left">Khách hàng</th>
-                        <th className="p-3 text-left">Tổng tiền</th>
-                        <th className="p-3 text-left">Trạng thái</th>
-                        <th className="p-3 text-left">Hành động</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {paginate(filteredOrders).map((order, index) => (
-                        <motion.tr
-                          key={order.id}
-                          className="border-b hover:bg-gray-50"
-                          variants={rowVariants}
-                          initial="hidden"
-                          animate="visible"
-                          custom={index}
-                        >
-                          <td className="p-3">{order.id}</td>
-                          <td className="p-3">{order.customer}</td>
-                          <td className="p-3">{order.total}</td>
-                          <td className="p-3">
-                            <span
-                              className={`px-2 py-1 rounded ${
-                                order.status === "Đã giao"
-                                  ? "bg-green-100 text-green-700"
-                                  : "bg-yellow-100 text-yellow-700"
-                              }`}
+                <div className="bg-white rounded-xl shadow-lg overflow-x-auto">
+                  {ordersLoading ? (
+                    <div className="flex justify-center items-center py-10 text-lg">
+                      Đang tải dữ liệu...
+                    </div>
+                  ) : (
+                    <table className="min-w-full text-center border-separate border-spacing-y-1">
+                      <thead className="bg-red-700 text-white rounded-xl">
+                        <tr>
+                          <th className="p-3 rounded-tl-xl border-r">STT</th>
+                          <th className="p-3 border-r">Khách hàng</th>
+                          <th className="p-3 border-r">Thời gian</th>
+                          <th className="p-3 border-r">Tổng số tiền</th>
+                          <th className="p-3 border-r">Trạng thái đơn hàng</th>
+                          <th className="p-3 border-r">
+                            Trạng thái thanh toán
+                          </th>
+                          <th className="p-3 rounded-tr-xl">Hành động</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredOrders.length === 0 ? (
+                          <tr>
+                            <td
+                              colSpan={7}
+                              className="py-8 text-gray-400 text-center bg-white rounded-b-xl"
                             >
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="p-3">
-                            <motion.button
-                              className="text-blue-500 hover:underline"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
+                              Không có đơn hàng nào.
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredOrders.map((order, index) => (
+                            <motion.tr
+                              key={order._id}
+                              className="bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm rounded-xl"
+                              whileHover={{
+                                boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+                                backgroundColor: "#f9fafb",
+                              }}
                             >
-                              Xem chi tiết
-                            </motion.button>
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
+                              <td className="p-3 font-medium align-middle">
+                                {(ordersPage - 1) * itemsPerPage + index + 1}
+                              </td>
+                              <td className="p-3 align-middle">
+                                {order.tenNguoiDung || "-"}
+                              </td>
+                              <td className="p-3 align-middle">
+                                {order.createdAt
+                                  ? new Date(
+                                      order.createdAt
+                                    ).toLocaleDateString("vi-VN")
+                                  : "-"}
+                              </td>
+                              <td className="p-3 align-middle text-right font-semibold text-black">
+                                {order.tongTien
+                                  ? Number(order.tongTien).toLocaleString(
+                                      "vi-VN"
+                                    ) + " đ"
+                                  : "-"}
+                              </td>
+                              <td className="p-3 align-middle">
+                                <select
+                                  className={`px-3 py-1 rounded-full text-sm font-semibold shadow-sm select-none border focus:outline-none focus:ring-2
+                                  ${
+                                    order.trangThaiDonHang === "Đã giao"
+                                      ? "bg-green-100 text-green-700 border-green-300"
+                                      : order.trangThaiDonHang ===
+                                        "Chờ xác nhận"
+                                      ? "bg-yellow-50 text-yellow-700 border-yellow-400"
+                                      : order.trangThaiDonHang === "Đang xử lý"
+                                      ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                                      : order.trangThaiDonHang === "Đã xác nhận"
+                                      ? "bg-blue-50 text-blue-500 border-blue-300"
+                                      : order.trangThaiDonHang === "Đã hủy"
+                                      ? "bg-red-50 text-red-500 border-red-300"
+                                      : order.trangThaiDonHang ===
+                                        "Đang giao hàng"
+                                      ? "bg-teal-50 text-teal-500 border-teal-300"
+                                      : order.trangThaiDonHang ===
+                                        "Đã giao hàng"
+                                      ? "bg-indigo-50 text-indigo-600 border-indigo-300"
+                                      : "bg-gray-100 text-gray-700 border-gray-300"
+                                  }
+                                `}
+                                  value={order.trangThaiDonHang}
+                                  onChange={(e) =>
+                                    handleUpdateOrderStatus(
+                                      order._id,
+                                      e.target.value
+                                    )
+                                  }
+                                >
+                                  <option value="Chờ xác nhận">
+                                    Chờ xác nhận
+                                  </option>
+                                  <option value="Đã xác nhận">
+                                    Đã xác nhận
+                                  </option>
+                                  <option value="Đang giao hàng">
+                                    Đang giao hàng
+                                  </option>
+                                  <option value="Đã giao hàng">
+                                    Đã giao hàng
+                                  </option>
+                                  <option value="Đã hủy">Đã hủy</option>
+                                </select>
+                              </td>
+                              <td className="p-3 align-middle">
+                                <span
+                                  className={`px-3 py-1 rounded-full text-sm font-semibold shadow-sm select-none
+                                  ${
+                                    order.trangThaiThanhToan === "Đã thanh toán"
+                                      ? "bg-green-50 text-green-600 border border-green-400"
+                                      : "bg-gray-100 text-gray-700 border border-gray-300"
+                                  }`}
+                                >
+                                  {order.trangThaiThanhToan ||
+                                    "Chưa thanh toán"}
+                                </span>
+                              </td>
+                              <td className="p-3 align-middle">
+                                <button
+                                  className="text-blue-500 hover:underline font-medium cursor-pointer"
+                                  onClick={() => {
+                                    setOrderDetail(order);
+                                    setDrawerOpen(true);
+                                  }}
+                                >
+                                  Xem chi tiết
+                                </button>
+                              </td>
+                            </motion.tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+                  {/* Drawer chi tiết đơn hàng */}
+                  <Drawer
+                    title="Chi tiết đơn hàng"
+                    placement="right"
+                    width={480}
+                    onClose={() => {
+                      setDrawerOpen(false);
+                      setOrderDetail(null);
+                    }}
+                    open={drawerOpen}
+                  >
+                    {orderDetail && (
+                      <>
+                        <div className="mb-2">
+                          <span className="font-medium">Khách hàng:</span>{" "}
+                          {orderDetail.tenNguoiDung}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Email:</span>{" "}
+                          {orderDetail.email}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Số điện thoại:</span>{" "}
+                          {orderDetail.sdt}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Địa chỉ:</span>{" "}
+                          {orderDetail.diaChi}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Tổng tiền:</span>{" "}
+                          {orderDetail.tongTien?.toLocaleString("vi-VN") + " đ"}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">
+                            Trạng thái đơn hàng:
+                          </span>{" "}
+                          {orderDetail.trangThaiDonHang}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">
+                            Trạng thái thanh toán:
+                          </span>{" "}
+                          {orderDetail.trangThaiThanhToan}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Ngày tạo:</span>{" "}
+                          {orderDetail.createdAt
+                            ? new Date(orderDetail.createdAt).toLocaleString(
+                                "vi-VN"
+                              )
+                            : "-"}
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-medium">Ghi chú:</span>{" "}
+                          {orderDetail.ghiChu || "-"}
+                        </div>
+                        <div className="mt-4">
+                          <h4 className="font-semibold mb-2">
+                            Sản phẩm trong đơn:
+                          </h4>
+                          <ul className="divide-y divide-gray-200">
+                            {orderDetail.chiTietDonHang?.map((item, idx) => (
+                              <li key={idx} className="py-2 text-left">
+                                <div>
+                                  <span className="font-medium">
+                                    Tên sản phẩm:
+                                  </span>{" "}
+                                  {item.tenSanPham}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Số lượng:</span>{" "}
+                                  {item.soLuong}
+                                </div>
+                                <div>
+                                  <span className="font-medium">Giá:</span>{" "}
+                                  {item.giaBan?.toLocaleString("vi-VN") + " đ"}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </>
+                    )}
+                  </Drawer>
                   <div className="flex justify-between items-center p-4">
                     <span>
-                      Trang {currentPage} / {totalPages(filteredOrders)}
+                      Trang {ordersPage} / {ordersTotalPages}
                     </span>
                     <div className="flex gap-2">
                       <motion.button
                         className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={ordersPage === 1}
+                        onClick={handleOrdersPrev}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -938,8 +1058,8 @@ const fetchProducts = async () => {
                       </motion.button>
                       <motion.button
                         className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === totalPages(filteredOrders)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={ordersPage === ordersTotalPages}
+                        onClick={handleOrdersNext}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -970,7 +1090,6 @@ const fetchProducts = async () => {
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
-                      setCurrentPage(1);
                     }}
                     whileFocus={{ scale: 1.02, transition: { duration: 0.2 } }}
                   />
@@ -987,7 +1106,7 @@ const fetchProducts = async () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {paginate(filteredCustomers).map((customer, index) => (
+                      {filteredCustomers.map((customer, index) => (
                         <motion.tr
                           key={customer.id}
                           className="border-b hover:bg-gray-50"
@@ -1013,31 +1132,6 @@ const fetchProducts = async () => {
                       ))}
                     </tbody>
                   </table>
-                  <div className="flex justify-between items-center p-4">
-                    <span>
-                      Trang {currentPage} / {totalPages(filteredCustomers)}
-                    </span>
-                    <div className="flex gap-2">
-                      <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Trước
-                      </motion.button>
-                      <motion.button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        disabled={currentPage === totalPages(filteredCustomers)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Sau
-                      </motion.button>
-                    </div>
-                  </div>
                 </div>
               </motion.div>
             )}

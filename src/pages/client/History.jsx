@@ -39,7 +39,40 @@ const HistoryPage = () => {
       title: "Trạng thái đơn hàng",
       dataIndex: "trangThaiDonHang",
       render: (item) => (
-        <Tag color={`${item === "Chờ xác nhận" ? "gold" : "processing"}`}>
+        <Tag
+          color={
+            item === "Chờ xác nhận"
+              ? "gold"
+              : item === "Đã hủy"
+              ? "red"
+              : item === "Đang giao hàng"
+              ? "cyan"
+              : item === "Đã giao hàng"
+              ? "blue"
+              : "processing"
+          }
+          style={
+            item === "Đã hủy"
+              ? {
+                  background: "#fff1f0",
+                  color: "#ff4d4f",
+                  borderColor: "#ffa39e",
+                }
+              : item === "Đang giao hàng"
+              ? {
+                  background: "#e6fffb",
+                  color: "#13c2c2",
+                  borderColor: "#87e8de",
+                }
+              : item === "Đã giao hàng"
+              ? {
+                  background: "#f0f5ff",
+                  color: "#2f54eb",
+                  borderColor: "#adc6ff",
+                }
+              : {}
+          }
+        >
           {item}
         </Tag>
       ),
