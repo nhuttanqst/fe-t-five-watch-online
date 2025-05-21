@@ -58,7 +58,7 @@ const ProductDetailPage = () => {
     };
 
     fetchDataViewDetail();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (dataViewDetail) {

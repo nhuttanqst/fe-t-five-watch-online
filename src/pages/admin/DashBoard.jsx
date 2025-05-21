@@ -29,6 +29,7 @@ import {
 } from "../../services/api";
 import { Drawer, Spin, Modal, Form, Input, Select } from "antd";
 import { useCurrentApp } from "../../context/app.context";
+import { CloseOutlined } from "@ant-design/icons";
 
 // Đăng ký các thành phần Chart.js
 ChartJS.register(
@@ -91,6 +92,7 @@ const Dashboard = () => {
   const itemsPerPage = 5;
 
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       await fetchBrandsData();
@@ -1048,7 +1050,7 @@ const Dashboard = () => {
                     whileFocus={{ scale: 1.02, transition: { duration: 0.2 } }}
                   />
                   <button
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium"
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-medium cursor-pointer"
                     onClick={() => setAddModalOpen(true)}
                   >
                     Thêm đơn hàng
@@ -1548,11 +1550,11 @@ const Dashboard = () => {
                 onSubmit={handleAddOrderSubmit}
               >
                 <button
-                  className="absolute top-2 right-3 text-xl text-gray-400 hover:text-red-600"
+                  className="absolute top-2 right-3 text-xl text-gray-400 hover:text-red-600 cursor-pointer"
                   type="button"
                   onClick={() => setAddModalOpen(false)}
                 >
-                  ×
+                  <CloseOutlined />
                 </button>
                 <h3 className="text-lg font-semibold mb-4 text-center">
                   Thêm đơn hàng mới
@@ -1711,7 +1713,7 @@ const Dashboard = () => {
                 </div>
                 <button
                   type="submit"
-                  className="mt-6 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 font-semibold"
+                  className="mt-6 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 font-semibold cursor-pointer"
                   disabled={addOrderLoading}
                 >
                   {addOrderLoading ? "Đang thêm..." : "Thêm đơn hàng"}
