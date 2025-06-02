@@ -87,10 +87,14 @@ export const chatbotApi = (data) => {
   return axiosChatbot.post("/api/chatbot", data);
 };
 
+export const getRolesApi = () => {
+  return axiosUser.get("/api/roles");
+};
+
 export const uploadAvatarApi = (file) => {
   const formData = new FormData();
   formData.append("image", file);
-  return axiosUser.post("http://localhost:3001/api/upload", formData, {
+  return axiosUser.post("/api/upload", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

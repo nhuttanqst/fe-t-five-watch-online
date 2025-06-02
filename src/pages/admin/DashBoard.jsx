@@ -26,6 +26,7 @@ import {
   createOrderApi,
   getUsersApi,
   updateProfileApi as updateUserApi,
+  getRolesApi,
 } from "../../services/api";
 import { Drawer, Spin, Modal, Form, Input, Select } from "antd";
 import { useCurrentApp } from "../../context/app.context";
@@ -84,8 +85,10 @@ const Dashboard = () => {
     hoTen: "",
     gioiTinh: "",
     sdt: "",
+    quyen: "",
   });
   const [currentPage, setCurrentPage] = useState(1);
+  const [roles, setRoles] = useState([]);
 
   const { messageApi } = useCurrentApp();
 
@@ -453,6 +456,21 @@ const Dashboard = () => {
     // eslint-disable-next-line
   }, [activeTab, usersPage, userSearch]);
 
+  // Lấy danh sách quyền
+  const fetchRoles = async () => {
+    try {
+      const res = await getRolesApi();
+      console.log("res:", res);
+
+      if (res.status && res.data) setRoles(res.data);
+      else setRoles([]);
+    } catch {
+      setRoles([]);
+    }
+  };
+
+  console.log(roles);
+
   // Hàm mở modal sửa user
   const handleEditUser = (user) => {
     setEditUserForm({
@@ -460,7 +478,10 @@ const Dashboard = () => {
       tenNguoiDung: user.tenNguoiDung || "",
       gioiTinh: user.gioiTinh || "",
       sdt: user.sdt || "",
+      quyen: user.quyen?.tenQuyen || "",
     });
+
+    fetchRoles();
     setEditUserModalOpen(true);
   };
 
@@ -526,6 +547,12 @@ const Dashboard = () => {
   };
 
   const totalPages = (data) => Math.ceil(data.length / itemsPerPage);
+
+  // TÍNH TỔNG DOANH THU THỰC TẾ
+  const totalRevenue = orders.reduce(
+    (sum, order) => sum + (Number(order.tongTien) || 0),
+    0
+  );
 
   return (
     <div className="min-h-screen flex font-roboto bg-gray-100">
@@ -623,7 +650,7 @@ const Dashboard = () => {
                     {
                       icon: "💰",
                       title: "Tổng doanh thu",
-                      value: "1,900,677,777 đ",
+                      value: totalRevenue.toLocaleString("vi-VN") + " đ",
                       change: "↓ 12% so với tháng trước",
                       changeColor: "text-red-500",
                     },
@@ -1790,6 +1817,23 @@ const Dashboard = () => {
                     setEditUserForm((f) => ({ ...f, sdt: e.target.value }))
                   }
                 />
+              </Form.Item>
+              <Form.Item label="Quyền">
+                <Select
+                  value={editUserForm.quyen}
+                  onChange={(val) =>
+                    setEditUserForm((f) => ({ ...f, quyen: val }))
+                  }
+                  placeholder="Chọn quyền"
+                >
+                  {roles.map((role) => {
+                    return (
+                      <Select.Option key={role._id} value={role._id}>
+                        {role.tenQuyen}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Form>
           </Modal>
