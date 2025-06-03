@@ -4,12 +4,13 @@ import { Link, useParams } from "react-router-dom";
 import { Breadcrumb, Button, Col, Input, Rate, Row, Spin } from "antd";
 import { useCurrentApp } from "../../context/app.context";
 import PopularWatches from "../../components/PopularWatches";
+import SkeletonLoader from "../../components/SkeletonLoader";
 import { items } from "../../data";
 import { addReviewApi, fetchReviewsByProduct } from "../../services/api";
 import useWatchesData from "../../apiservice/useWathes";
+import { getProduct } from "../../apiservice/apiProduct";
 import "react-image-gallery/styles/css/image-gallery.css";
 import "../../styles/product.detail.css";
-import { getProduct } from "../../apiservice/apiProduct";
 
 const typeMapping = {
   Nam: "Đồng Hồ Nam",
@@ -183,7 +184,17 @@ const ProductDetailPage = () => {
             <Link to="/">Trang chủ</Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <Link to="/">{type}</Link>
+            <Link
+              to={`${
+                type === "Đồng Hồ Nam"
+                  ? "/men"
+                  : type === "Đồng Hồ Nữ"
+                  ? "/women"
+                  : "/couple"
+              }`}
+            >
+              {type}
+            </Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
             {dataViewDetail.name || dataViewDetail.tenDH}
@@ -276,12 +287,18 @@ const ProductDetailPage = () => {
           ))}
         </div>
 
-        <PopularWatches
-          watches={filteredWatches}
-          title="SẢN PHẨM TƯƠNG TỰ"
-          mx
-          px
-        />
+        {loading ? (
+          <SkeletonLoader px />
+        ) : (
+          <>
+            <PopularWatches
+              watches={filteredWatches}
+              title="SẢN PHẨM TƯƠNG TỰ"
+              mx
+              px
+            />
+          </>
+        )}
 
         <div className="mt-10 px-12">
           <h2 className="text-xl font-bold mb-4">Đánh giá sản phẩm</h2>

@@ -16,22 +16,29 @@ const FavoritePage = () => {
           <div className="grid grid-cols-4 gap-6">
             {favorite.map((watch) => (
               <div
-                key={watch.id}
+                key={watch.id || watch._id}
                 className="relative flex flex-col items-center text-center transition-all duration-300 hover:scale-105"
               >
-                <Link to={`/product/${watch.id}`}>
+                <Link to={`/product/${watch.id || watch._id}`}>
                   <div className="relative w-40 h-40 flex items-center justify-center">
                     <img
-                      src={watch.image}
-                      alt={watch.name}
+                      src={watch.image || watch.hinhAnh[0].duLieuAnh}
+                      alt={watch.name || watch.tenDH}
                       className="object-cover w-full h-full"
                     />
                   </div>
                   <p className="text-[#676767] text-sm mt-2 w-40 truncate">
-                    {watch.name}
+                    {watch.name || watch.tenDH}
                   </p>
                   <p className="text-[#606060] font-bold text-lg">
-                    {watch.price}
+                    {watch.price?.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                    {watch.giaBan?.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
                   </p>
                 </Link>
 

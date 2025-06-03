@@ -10,6 +10,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct } from "../../apiservice/apiProduct";

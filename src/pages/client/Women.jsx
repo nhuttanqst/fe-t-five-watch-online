@@ -1,10 +1,7 @@
-// WomenPage.js
-import { useEffect, useState } from 'react';
-import PopularWatches from '../../components/PopularWatches';
-import icon from '../../assets/icon-filter.png';
-import banner from '../../assets/banner_Women.png';
-
-import useWatchesData from '../../apiservice/useWathes';
+import PopularWatches from "../../components/PopularWatches";
+import useWatchesData from "../../apiservice/useWathes";
+import banner from "../../assets/banner_Women.png";
+import icon from "../../assets/icon-filter.png";
 
 const SkeletonLoader = () => (
   <div className="grid gap-6 mx-20 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
@@ -49,7 +46,8 @@ const WomenPage = () => {
         className="mx-auto my-4 rounded-2xl hover:shadow-lg hover:scale-105 transition-transform duration-300"
       />
       <p className="flex justify-center [color:#9E9E9E] text-2xl">
-        Những mẫu đồng hồ nữ đẹp đã trở thành biểu tượng của giới mê thời trang bởi không chỉ thiết kế bắt mắt...
+        Những mẫu đồng hồ nữ đẹp đã trở thành biểu tượng của giới mê thời trang
+        bởi không chỉ thiết kế bắt mắt...
       </p>
       <div className="border-t border-gray-300 my-8"></div>
       <div className="relative">

@@ -101,3 +101,11 @@ export const uploadAvatarApi = (file) => {
     withCredentials: true,
   });
 };
+
+export const addAccessHistoryApi = (productId) => {
+  return axiosUser.post("/api/users/addAccessHistory", { productId });
+};
+
+export const getUserAnalyticsApi = () => {
+  return axiosUser.get("/api/users/analytics");
+};

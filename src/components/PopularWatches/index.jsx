@@ -1,17 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useCurrentApp } from "../../context/app.context";
+import { addAccessHistoryApi } from "../../services/api";
 
 const PopularWatches = ({ watches, title, mx, px }) => {
-  const { favorite, toggleFavorite } = useCurrentApp();
+  const { favorite, toggleFavorite, user } = useCurrentApp();
   const navigate = useNavigate();
 
   const handleViewDetail = (watch) => {
-    navigate(`/product/${watch.id}`);
+    if (user) {
+      addAccessHistoryApi(watch.id || watch._id);
+    }
+    navigate(`/product/${watch.id || watch._id}`);
   };
 
   const isFavorite = (id) => {
-    return favorite.some((item) => item.id === id);
+    return favorite.some((item) => (item.id ? item.id : item._id) === id);
   };
 
   return (
@@ -27,21 +31,23 @@ const PopularWatches = ({ watches, title, mx, px }) => {
       >
         {watches.map((watch) => (
           <div
-            key={watch.id}
+            key={watch.id || watch._id}
             className="group flex flex-col items-center text-center cursor-pointer transition-transform duration-300 hover:scale-105"
             onClick={() => handleViewDetail(watch)}
           >
             <div className="relative w-48 h-48 flex items-center justify-center">
               <img
-                src={watch.image}
-                alt={watch.name}
+                src={watch.image || watch.hinhAnh[0].duLieuAnh}
+                alt={watch.name || watch.tenDH}
                 className="object-cover w-full h-full"
                 loading="lazy"
               />
 
               <button
                 className={`absolute top-2 right-2 text-xl transition-all duration-300 cursor-pointer ${
-                  isFavorite(watch.id) ? "text-red-500" : "text-gray-500"
+                  isFavorite(watch.id || watch._id)
+                    ? "text-red-500"
+                    : "text-gray-500"
                 } hover:text-red-500`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -49,16 +55,24 @@ const PopularWatches = ({ watches, title, mx, px }) => {
                   toggleFavorite(watch);
                 }}
               >
-                {isFavorite(watch.id) ? <HeartFilled /> : <HeartOutlined />}
+                {isFavorite(watch.id || watch._id) ? (
+                  <HeartFilled />
+                ) : (
+                  <HeartOutlined />
+                )}
               </button>
             </div>
 
             <p className="text-gray-700 text-sm mt-2 w-40 truncate transition-all duration-300 group-hover:scale-105">
-              {watch.name}
+              {watch.name || watch.tenDH}
             </p>
 
             <p className="text-black font-bold text-lg transition-all duration-300 group-hover:scale-105">
-              {watch.price.toLocaleString("vi-VN", {
+              {watch.price?.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+              {watch.giaBan?.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
               })}

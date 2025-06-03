@@ -1,10 +1,8 @@
-// MenPage.js
-import { useEffect, useState } from 'react';
-import PopularWatches from '../../components/PopularWatches';
-import icon from '../../assets/icon-filter.png';
-import banner from '../../assets/banner_Men.png';
+import PopularWatches from "../../components/PopularWatches";
+import icon from "../../assets/icon-filter.png";
+import banner from "../../assets/banner_Men.png";
 
-import useWatchesData from '../../apiservice/useWathes';
+import useWatchesData from "../../apiservice/useWathes";
 
 const SkeletonLoader = () => (
   <div className="grid gap-6 mx-20 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
@@ -51,7 +49,8 @@ const MenPage = () => {
         className="mx-auto my-4 rounded-2xl hover:shadow-lg hover:scale-105 transition-transform duration-300"
       />
       <p className="flex justify-center [color:#9E9E9E] text-2xl">
-        Những mẫu đồng hồ nam đẹp luôn là món phụ kiện thời trang hoàn hảo cho tất cả các dịp, giúp nam giới tự tin hơn – khẳng định phong cách...
+        Những mẫu đồng hồ nam đẹp luôn là món phụ kiện thời trang hoàn hảo cho
+        tất cả các dịp, giúp nam giới tự tin hơn – khẳng định phong cách...
       </p>
       <div className="border-t border-gray-300 my-8"></div>
       <div className="relative">
